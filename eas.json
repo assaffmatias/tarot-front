@@ -1,0 +1,33 @@
+{
+  "cli": {
+    "version": ">= 7.6.0"
+  },
+  "build": {
+    "preview": {
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://app.locosxpadel.com/tarot_arcano/api",
+        "EXPO_PUBLIC_WEB_URL": "https://app.locosxpadel.com/tarot_arcano/",
+        "EXPO_PUBLIC_WSS_URL": "wss://app.locosxpadel.com/tarot_arcano/"
+      }
+    },
+    "preview2": {
+      "android": {
+        "gradleCommand": ":app:assembleRelease"
+      }
+    },
+    "preview3": {
+      "developmentClient": true
+    },
+    "preview4": {
+      "distribution": "internal"
+    },
+    "production": {}
+  },
+
+  "submit": {
+    "production": {}
+  }
+}

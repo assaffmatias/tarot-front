@@ -1,0 +1,14 @@
+export { default as Details } from "./Details";
+export { default as Home } from "./Home";
+export { default as Login } from "./Login";
+export { default as Oraculos } from "./Oraculos";
+export { default as Oraculos2 } from "./Oraculos2";
+export { default as Profile } from "./Profile";
+export { default as Recover } from "./Recover";
+export { default as RecoverCode } from "./RecoverCode";
+export { default as Register } from "./Register";
+export { default as Settings } from "./Settings";
+export { default as Verification } from "./Verification";
+export { default as Welcome } from "./Welcome";
+export { default as PayService } from "./PayService";
+export { default as Chat } from "./Chat";

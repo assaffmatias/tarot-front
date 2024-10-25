@@ -1,0 +1,67 @@
+{
+  "expo": {
+    "name": "tarot_arcano_front",
+    "slug": "tarot_arcano_front",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "scheme": "myapp",
+    "splash": {
+      "image": "./assets/logo-start.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#191970",
+      "statusBar": {
+        "barStyle": "light-content"
+      }
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.miqueasledesmadev.tarot_arcano_front"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-secure-store",
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./fonts/Gilroy-Bold.ttf",
+            "./fonts/Gilroy-Heavy.ttf",
+            "./fonts/Gilroy-Light.ttf",
+            "./fonts/Gilroy-Medium.ttf",
+            "./fonts/Gilroy-Regular.ttf"
+          ]
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "La aplicación Tarot Arcano solicita permiso para acceder a la galería de fotos de tu dispositivo."
+        }
+      ],
+      [
+        "expo-av",
+        {
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "4a2ea90f-5675-4d1e-8d43-66c99328d0c9"
+      }
+    }
+  }
+}
