@@ -4,6 +4,7 @@ import { useAuthStore } from "../stores";
 import { api } from "../axios";
 import {
   Chat,
+  ChatList,
   Login,
   PayService,
   Recover,
@@ -68,6 +69,12 @@ const StackRoutes = {
   CHAT_SERVICE: {
     name: stackRoutesNames.CHAT_SERVICE,
     Component: Chat,
+    auth: true,
+    header: false,
+  },
+  CHAT_LIST: {
+    name: stackRoutesNames.CHAT_LIST,
+    Component: ChatList,
     auth: true,
     header: false,
   },

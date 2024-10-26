@@ -52,7 +52,7 @@ const Details = ({}) => {
           ))}
         </Box>
 
-        <Box w={"90%"} h={1} bg="primary" my={"xl"} alignSelf="center" />
+        {/* <Box w={"90%"} h={1} bg="primary" my={"xl"} alignSelf="center" /> */}
 
         <Box w={"90%"} alignSelf="center">
           <Text fontFamily="Heavy" fontSize={"xl"} color="gray-dark">

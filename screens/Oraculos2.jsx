@@ -65,8 +65,8 @@ const Oraculos2 = () => {
     <>
       <Animated.Image
         zIndex={-1}
-        source={require("../resources/bg_horoscopo.png")}
-        style={{ width: "100%", height: "100%", position: "absolute" }}
+        // source={require("../resources/bg_horoscopo.png")}
+        style={{ width: "100%", height: "100%", position: "absolute", backgroundColor: '#191970' }}
       />
       <Text fontFamily="Bold" fontSize={"4xl"} textAlign="center" color="#fff">
         ARCANO

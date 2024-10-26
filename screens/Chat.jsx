@@ -6,6 +6,7 @@ import { useChatSocket, useFetch } from "../hooks";
 import { sendMsg } from "../services/chatService";
 import { useRoute } from "@react-navigation/native";
 import { useAuthStore } from "../stores";
+import { useNavigation } from "@react-navigation/native";
 
 // Componente para renderizar audios
 const RenderAudio = ({ audio }) => {
@@ -33,6 +34,7 @@ const Chat = () => {
   const [messages, setMessages] = useState([]);
   const user = useAuthStore((state) => state.userInfo);
   const { params } = useRoute();
+  const navigation = useNavigation()
 
   const { data, loading } = useFetch({
     url: `/messages/${params?._id}`,
@@ -111,7 +113,7 @@ const Chat = () => {
   return (
     <>
       <Header>
-        <Button>Finalizar consulta</Button>
+        <Button onPress={() => navigation.goBack()}>Regresar</Button>
       </Header>
       <GiftedChat
         renderAvatar={() => (

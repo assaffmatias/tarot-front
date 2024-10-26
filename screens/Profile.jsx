@@ -83,18 +83,18 @@ const Profile = () => {
             fontFamily: "MaterialIcons",
             action: () => Linking.openURL("mailto:miqueasledesmadev@gmail.com"),
           },
-          {
-            title: "Información",
-            iconName: "info",
-            fontFamily: "Foundation",
-            action: () => {},
-          },
-          {
-            title: "Promociones",
-            iconName: "price-ribbon",
-            fontFamily: "Entypo",
-            action: () => {},
-          },
+          // {
+          //   title: "Información",
+          //   iconName: "info",
+          //   fontFamily: "Foundation",
+          //   action: () => {},
+          // },
+          // {
+          //   title: "Promociones",
+          //   iconName: "price-ribbon",
+          //   fontFamily: "Entypo",
+          //   action: () => {},
+          // },
           {
             title: "Salir",
             iconName: "sign-out",

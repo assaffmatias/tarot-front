@@ -46,7 +46,7 @@ const Home = () => {
         <Button
           bg="transparent"
           onPress={() =>
-            navigate(stackRoutesNames.CHAT_SERVICE, {
+            navigate(stackRoutesNames.CHAT_LIST, {
               _id: "66ee08c0ded49463f9bd6ba5",
             })
           }
