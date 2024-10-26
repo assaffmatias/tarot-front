@@ -25,7 +25,6 @@ const CardComponent = ({ data }) => {
           w={"100%"}
           source={{ uri: apiUrl + `/uploads/service/${data._id}` }}
         />
-        {console.log(data._id)}
 
         <Box style={style.blurView} intensity={11}>
           <Text color="#fff" fontSize={"3xl"} fontFamily="Bold">
