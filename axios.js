@@ -24,7 +24,6 @@ class ApiQuery {
       const { data } = await this.axios.post(this.baseURL + url, body, config);
       return data;
     } catch (error) {
-      console.log(error);
       Alert.alert("¡Error!", error.response.data.msg ?? error.message);
       return {};
     }
@@ -47,7 +46,6 @@ class ApiQuery {
       const { data } = await this.axios.put(this.baseURL + url, body, config);
       return data;
     } catch (error) {
-      console.log({ error: error.response, data: error.response.data });
       Alert.alert("¡Error!", error.response.data.msg ?? error.message);
       return {};
     }
@@ -58,7 +56,6 @@ class ApiQuery {
       const { data } = await this.axios.get(this.baseURL + url, body);
       return data;
     } catch (error) {
-      console.log(error);
       Alert.alert("¡Error!", error.response.data.msg ?? error.message);
       return {};
     }
