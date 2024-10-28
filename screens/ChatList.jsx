@@ -9,11 +9,12 @@ const ChatList = () => {
     const users = [
         { name: 'Matias', msg: 'Este es el mensaje', image: 'https://images.unsplash.com/photo-1640951613773-54706e06851d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
         { name: 'Lucia', msg: 'Hola, ¿cómo estás?', image: '' },
+        { name: 'Usuario', msg: 'Este es un mensaje de prueba con 40 dígitos!!!', image: '' },
     ];
 
     // Función para truncar el mensaje
     const truncateMessage = (msg) => {
-        return msg.length > 40 ? `${msg.substring(0, 40)}...` : msg;
+        return msg.length > 30 ? `${msg.substring(0, 30)}...` : msg;
     };
 
     return (
@@ -42,7 +43,7 @@ export default ChatList;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: '5%',
+        paddingTop: '15%',
         alignItems: 'center',
         backgroundColor: '#fff',
     },
