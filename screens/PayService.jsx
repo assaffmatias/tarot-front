@@ -10,11 +10,9 @@ const PayService = ({ navigation }) => {
   const [approvalUrl, setApprovalUrl] = useState(null);
 
   const user = useAuthStore((state) => state.userInfo);
-  console.log(user._id);
   const route = useRoute();
 
-  const { data = {} } = route.params || {};
-  console.log(data);
+  const { data = {}, price } = route.params || {};
 
   useEffect(() => {
     // Llama a la API para obtener el approvalUrl solo una vez
@@ -22,7 +20,7 @@ const PayService = ({ navigation }) => {
       try {
         const response = await api.POST("/transaction", {
           currency: "USD",
-          amount: "10.00",
+          amount: `${price}.00`,
         });
         setApprovalUrl(response.approvalUrl);
       } catch (error) {
@@ -33,15 +31,16 @@ const PayService = ({ navigation }) => {
     createPayment();
   }, []);
 
-  // const successTransaction = async () => {
-  //   const response = await api.POST("/transaction/success", {
-  //     client: "USD",
-  //     seller: "10.00",
-  //     price: "",
-  //     service: "",
-  //     paypal_id: "",
-  //   });
-  // };
+  const successTransaction = async (url) => {
+    const payerId = url.split("=")[2];
+    await api.POST("/transaction/success", {
+      client: user._id,
+      seller: data.user._id,
+      price: `${price}.00`,
+      service: data._id,
+      paypal_id: payerId,
+    });
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -59,7 +58,7 @@ const PayService = ({ navigation }) => {
           onNavigationStateChange={(event) => {
             if (event.url.includes("success")) {
               alert("Pago completado");
-              // successTransaction();
+              successTransaction(event.url);
               navigation.goBack();
             }
           }}
