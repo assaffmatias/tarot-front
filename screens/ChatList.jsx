@@ -13,8 +13,10 @@ const ChatList = () => {
     useEffect(() => {
         const getChats = async () => {
             try {
-                const response = await api.GET(`/transaction/client/${user._id}`);
-                const sortedChats = response.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // Ordena por fecha de creación, más reciente primero
+                const response = user.role === 'USER_REGULAR' ?
+                    await api.GET(`/transaction/client/${user._id}`)
+                    : await api.GET(`/transaction/seller/${user._id}`)
+                const sortedChats = response.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setChatList(sortedChats);
             } catch (error) {
                 console.error("Error al obtener los datos:", error);
@@ -28,28 +30,53 @@ const ChatList = () => {
         return msg.length > 30 ? `${msg.substring(0, 30)}...` : msg;
     };
 
-    return (
-        <View style={styles.container}>
-            <Text style={styles.headerText}>Mensajes</Text>
-            <ScrollView style={styles.scrollView}>
-                {chatList.map((chat, index) => (
-                    <Pressable
-                        onPress={() => navigation.navigate(stackRoutesNames.CHAT_SERVICE, { _id: chat._id, sellerName: chat.seller?.userName, sellerId: chat.seller?._id })}
-                        key={index}
-                        style={styles.userContainer}>
-                        <Image
-                            source={{ uri: chat.seller?.image || 'https://static.vecteezy.com/system/resources/previews/005/129/844/non_2x/profile-user-icon-isolated-on-white-background-eps10-free-vector.jpg' }}
-                            style={styles.userImage}
-                        />
-                        <View style={styles.textContainer}>
-                            <Text style={styles.userName}>{chat.seller?.userName}</Text>
-                            <Text style={styles.userMsg}>{truncateMessage(chat.service.description)}</Text>
-                        </View>
-                    </Pressable>
-                ))}
-            </ScrollView>
-        </View>
-    );
+    return user.role === 'USER_REGULAR' ?
+        (
+            <View style={styles.container}>
+                <Text style={styles.headerText}>Mensajes</Text>
+                <ScrollView style={styles.scrollView}>
+                    {chatList.length === 0 && <Text>No tienes mensajes</Text>}
+                    {chatList.map((chat, index) => (
+                        <Pressable
+                            onPress={() => navigation.navigate(stackRoutesNames.CHAT_SERVICE, { _id: chat._id, sellerName: chat.seller?.userName, sellerId: chat.seller?._id })}
+                            key={index}
+                            style={styles.userContainer}>
+                            <Image
+                                source={{ uri: chat.seller?.image || 'https://static.vecteezy.com/system/resources/previews/005/129/844/non_2x/profile-user-icon-isolated-on-white-background-eps10-free-vector.jpg' }}
+                                style={styles.userImage}
+                            />
+                            <View style={styles.textContainer}>
+                                <Text style={styles.userName}>{chat.seller?.userName}</Text>
+                                <Text style={styles.userMsg}>{truncateMessage(chat.service.description)}</Text>
+                            </View>
+                        </Pressable>
+                    ))}
+                </ScrollView>
+            </View>
+        )
+        : (
+            <View style={styles.container}>
+                <Text style={styles.headerText}>Mensajes</Text>
+                <ScrollView style={styles.scrollView}>
+                    {chatList.length === 0 && <Text>No tienes mensajes</Text>}
+                    {chatList.map((chat, index) => (
+                        <Pressable
+                            onPress={() => navigation.navigate(stackRoutesNames.CHAT_SERVICE, { _id: chat._id, userName: chat.client?.userName, clientId: chat.client?._id })}
+                            key={index}
+                            style={styles.userContainer}>
+                            <Image
+                                source={{ uri: chat.client?.image || 'https://static.vecteezy.com/system/resources/previews/005/129/844/non_2x/profile-user-icon-isolated-on-white-background-eps10-free-vector.jpg' }}
+                                style={styles.userImage}
+                            />
+                            <View style={styles.textContainer}>
+                                <Text style={styles.userName}>{chat.client?.userName}</Text>
+                                {/* <Text style={styles.userMsg}>{truncateMessage(chat.service.description)}</Text> */}
+                            </View>
+                        </Pressable>
+                    ))}
+                </ScrollView>
+            </View>
+        )
 };
 
 export default ChatList;

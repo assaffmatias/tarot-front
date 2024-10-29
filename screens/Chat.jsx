@@ -36,7 +36,12 @@ const Chat = () => {
   const { params } = useRoute();
   const navigation = useNavigation()
 
-  const sellerName = params?.sellerName || "Chat";
+  const sellerName = params?.sellerName || "";
+  const userName = params?.userName || "";
+
+  console.log('PARAMS:',  params);
+  
+  
 
   const { data, loading } = useFetch({
     url: `/messages/${params?._id}`,
@@ -62,7 +67,7 @@ const Chat = () => {
             _id: params._id,
             msg: {
               ...message,
-              to: params.sellerId,
+              to: params.sellerId || params.clientId,
           },
           });
 
@@ -121,7 +126,7 @@ const Chat = () => {
       <Header style={{ paddingTop: '15%' }}>
         <Box style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
           <Button onPress={() => navigation.goBack()}>Regresar</Button>
-          <Text style={{ fontSize: 20, fontWeight: "bold", marginLeft: 20 }}>{sellerName}</Text>
+          <Text style={{ fontSize: 20, fontWeight: "bold", marginLeft: 20 }}>{sellerName || userName}</Text>
         </Box>
 
       </Header>
