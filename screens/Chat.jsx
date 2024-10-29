@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { GiftedChat } from "react-native-gifted-chat";
-import { Button, Header, Icon, Image, Text } from "react-native-magnus";
+import { Button, Header, Icon, Image, Text, Box } from "react-native-magnus";
 import { Audio } from "expo-av";
 import { useChatSocket, useFetch } from "../hooks";
 import { sendMsg } from "../services/chatService";
@@ -36,6 +36,8 @@ const Chat = () => {
   const { params } = useRoute();
   const navigation = useNavigation()
 
+  const sellerName = params?.sellerName || "Chat";
+
   const { data, loading } = useFetch({
     url: `/messages/${params?._id}`,
     fetch: !!params?._id,
@@ -54,16 +56,20 @@ const Chat = () => {
   const onSend = useCallback(
     (newMessages = []) => {
       setMessages((previousMessages) => {
+        const message = newMessages[newMessages.length - 1];
         if (params._id)
           sendMsg({
             _id: params._id,
-            msg: newMessages[newMessages.length - 1],
+            msg: {
+              ...message,
+              to: params.sellerId,
+          },
           });
 
         return GiftedChat.append(previousMessages, newMessages);
       });
     },
-    [params._id]
+    [params._id, user._id, params.sellerId]
   );
 
   // Renderiza el botón de envío de mensajes
@@ -112,8 +118,12 @@ const Chat = () => {
 
   return (
     <>
-      <Header>
-        <Button onPress={() => navigation.goBack()}>Regresar</Button>
+      <Header style={{ paddingTop: '15%' }}>
+        <Box style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
+          <Button onPress={() => navigation.goBack()}>Regresar</Button>
+          <Text style={{ fontSize: 20, fontWeight: "bold", marginLeft: 20 }}>{sellerName}</Text>
+        </Box>
+
       </Header>
       <GiftedChat
         renderAvatar={() => (
@@ -125,7 +135,7 @@ const Chat = () => {
             source={{ uri: "https://via.placeholder.com/150/150" }}
           />
         )}
-        placeholder="Escribe aquí"
+        placeholder="Mensaje"
         alwaysShowSend={true}
         renderSend={renderSend}
         messages={messages}
