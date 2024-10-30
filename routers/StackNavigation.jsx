@@ -6,6 +6,7 @@ import {
   Chat,
   ChatList,
   Login,
+  Notifications,
   PayService,
   Recover,
   Register,
@@ -75,6 +76,12 @@ const StackRoutes = {
   CHAT_LIST: {
     name: stackRoutesNames.CHAT_LIST,
     Component: ChatList,
+    auth: true,
+    header: false,
+  },
+  NOTIFICATIONS: {
+    name: stackRoutesNames.NOTIFICATIONS,
+    Component: Notifications,
     auth: true,
     header: false,
   },

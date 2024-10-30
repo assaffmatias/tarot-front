@@ -7,6 +7,7 @@ import { sendMsg } from "../services/chatService";
 import { useRoute } from "@react-navigation/native";
 import { useAuthStore } from "../stores";
 import { useNavigation } from "@react-navigation/native";
+import { io } from "socket.io-client";
 
 // Componente para renderizar audios
 const RenderAudio = ({ audio }) => {
@@ -39,9 +40,6 @@ const Chat = () => {
   const sellerName = params?.sellerName || "";
   const userName = params?.userName || "";
 
-  console.log('PARAMS:',  params);
-  
-  
 
   const { data, loading } = useFetch({
     url: `/messages/${params?._id}`,
@@ -57,18 +55,26 @@ const Chat = () => {
     data,
   });
 
+
+  const socket = io(process.env.EXPO_PUBLIC_WSS_URL);
+
+  socket.on('connect', () => {
+    socket.emit('addUsersActive', { id: socket.id, username: user.email });
+  });
+
   // Función para enviar mensajes
   const onSend = useCallback(
     (newMessages = []) => {
       setMessages((previousMessages) => {
         const message = newMessages[newMessages.length - 1];
         if (params._id)
+          socket.emit('newMessage', {to: params.sellerId || params.clientId, message: message})
           sendMsg({
             _id: params._id,
             msg: {
               ...message,
               to: params.sellerId || params.clientId,
-          },
+            },
           });
 
         return GiftedChat.append(previousMessages, newMessages);
@@ -124,7 +130,7 @@ const Chat = () => {
   return (
     <>
       <Header style={{ paddingTop: '15%' }}>
-        <Box style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
+        <Box style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
           <Button onPress={() => navigation.goBack()}>Regresar</Button>
           <Text style={{ fontSize: 20, fontWeight: "bold", marginLeft: 20 }}>{sellerName || userName}</Text>
         </Box>

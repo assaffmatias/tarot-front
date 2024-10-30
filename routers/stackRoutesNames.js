@@ -8,5 +8,6 @@ export const stackRoutesNames = {
   DETAILS: "Detalles",
   PAY_SERVICE: "Comprar",
   CHAT_SERVICE: "Chat",
-  CHAT_LIST: "ChatList"
+  CHAT_LIST: "ChatList",
+  NOTIFICATIONS: "Notifications"
 };

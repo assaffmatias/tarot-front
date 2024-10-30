@@ -1,7 +1,6 @@
 import { api } from "../axios";
 
 export const sendMsg = async ({ msg, _id }) => {
-  console.log(msg);
   
   try {
     const msgFormat = {
