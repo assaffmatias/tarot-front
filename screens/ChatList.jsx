@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { stackRoutesNames } from "../routers/stackRoutesNames";
 import { useAuthStore } from "../stores";
 import { api } from "../axios";
+import { Header } from "react-native-magnus";
 
 const ChatList = () => {
     const navigation = useNavigation();
@@ -33,7 +34,9 @@ const ChatList = () => {
     return user.role === 'USER_REGULAR' ?
         (
             <View style={styles.container}>
-                <Text style={styles.headerText}>Mensajes</Text>
+                <Header style={styles.header}>
+                    <Text style={styles.headerText}>Mensajes</Text>
+                </Header>
                 <ScrollView style={styles.scrollView}>
                     {chatList.length === 0 && <Text>No tienes mensajes</Text>}
                     {chatList.map((chat, index) => (
@@ -84,7 +87,7 @@ export default ChatList;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: '10%',
+        paddingTop: '5%',
         alignItems: 'center',
         backgroundColor: '#fff',
     },

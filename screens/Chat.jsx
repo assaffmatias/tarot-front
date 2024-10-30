@@ -8,6 +8,7 @@ import { useRoute } from "@react-navigation/native";
 import { useAuthStore } from "../stores";
 import { useNavigation } from "@react-navigation/native";
 import { io } from "socket.io-client";
+import { Pressable } from "react-native";
 
 // Componente para renderizar audios
 const RenderAudio = ({ audio }) => {
@@ -55,12 +56,31 @@ const Chat = () => {
     data,
   });
 
+  useEffect(() => {
+    const handleReceiveMessage = (data) => {
+      console.log(data);
+      setMessages((prevMessages) => GiftedChat.append(prevMessages, [data]));
+    };
+
+    // Escuchar el mensaje solo una vez
+    socket.on("receiveMessage", handleReceiveMessage);
+
+    // Limpiar al desmontar
+    return () => {
+      socket.off("receiveMessage", handleReceiveMessage);
+    };
+  }, []);
 
   const socket = io(process.env.EXPO_PUBLIC_WSS_URL);
 
-  socket.on('connect', () => {
-    socket.emit('addUsersActive', { id: socket.id, username: user.email });
+  socket.on("connect", () => {
+    socket.emit("addUsersActive", { id: socket.id, username: user.email });
   });
+
+  // useEffect(() => {
+  //   socket.on('recieveMesssage', (data) => console.log(data) )
+  // }, [])
+
 
   // Función para enviar mensajes
   const onSend = useCallback(
@@ -68,14 +88,14 @@ const Chat = () => {
       setMessages((previousMessages) => {
         const message = newMessages[newMessages.length - 1];
         if (params._id)
-          socket.emit('newMessage', {to: params.sellerId || params.clientId, message: message})
-          sendMsg({
-            _id: params._id,
-            msg: {
-              ...message,
-              to: params.sellerId || params.clientId,
-            },
-          });
+          socket.emit('newMessage', { to: params.sellerId || params.clientId, message: message })
+        sendMsg({
+          _id: params._id,
+          msg: {
+            ...message,
+            to: params.sellerId || params.clientId,
+          },
+        });
 
         return GiftedChat.append(previousMessages, newMessages);
       });
@@ -87,15 +107,18 @@ const Chat = () => {
   const renderSend = (props) => {
     return (
       <Button
-        bg="blue500"
+        bg="transparent"
         color="white"
+        rounded={'xl'}
+        marginHorizontal={10}
+        marginVertical={2}
         onPress={() => {
           if (props.text && props.onSend) {
             props.onSend({ text: props.text.trim() }, true);
           }
         }}
       >
-        <Icon name="send" fontFamily="Ionicons" fontSize={22} color="#fff" />
+        <Icon name="send" fontFamily="Ionicons" fontSize={22} color="#09f" />
       </Button>
     );
   };
@@ -129,12 +152,14 @@ const Chat = () => {
 
   return (
     <>
-      <Header style={{ paddingTop: '15%' }}>
+      <Header style={{ paddingTop: '5%' }}>
         <Box style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+          {/* <Pressable onPress={() => navigation.goBack()}>
+            <Icon name="chevron-back" fontFamily="Ionicons" fontSize={28} color="#000" />
+          </Pressable> */}
           <Button onPress={() => navigation.goBack()}>Regresar</Button>
           <Text style={{ fontSize: 20, fontWeight: "bold", marginLeft: 20 }}>{sellerName || userName}</Text>
         </Box>
-
       </Header>
       <GiftedChat
         renderAvatar={() => (
@@ -148,6 +173,12 @@ const Chat = () => {
         )}
         placeholder="Mensaje"
         alwaysShowSend={true}
+        textInputStyle={{
+          color: "#000",
+          backgroundColor: "#e6e6e6",
+          borderRadius: 20,
+          paddingHorizontal: 20
+        }}
         renderSend={renderSend}
         messages={messages}
         onSend={(messages) => onSend(messages)}
