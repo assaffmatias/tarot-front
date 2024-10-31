@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { stackRoutesNames } from "../routers/stackRoutesNames";
 import { useAuthStore } from "../stores";
 import { api } from "../axios";
-import { Header } from "react-native-magnus";
+import { Header, Icon, Box } from "react-native-magnus";
 
 const ChatList = () => {
     const navigation = useNavigation();
@@ -35,10 +35,20 @@ const ChatList = () => {
         (
             <View style={styles.container}>
                 <Header style={styles.header}>
-                    <Text style={styles.headerText}>Mensajes</Text>
+                    <Box style={{ flexDirection: "row", alignItems: "center" }}>
+                        <Pressable onPress={() => navigation.goBack()}>
+                            <Icon name="chevron-back" fontFamily="Ionicons" fontSize={28} color="#000" />
+                        </Pressable>
+                        <Text style={styles.headerText}>Mensajes</Text>
+                    </Box>
+
                 </Header>
                 <ScrollView style={styles.scrollView}>
-                    {chatList.length === 0 && <Text>No tienes mensajes</Text>}
+                    {chatList.length === 0 && (
+                        <View style={styles.noMSG}>
+                            <Text style={styles.noMSGText}>No tienes mensajes</Text>
+                        </View>
+                    )}
                     {chatList.map((chat, index) => (
                         <Pressable
                             onPress={() => navigation.navigate(stackRoutesNames.CHAT_SERVICE, { _id: chat._id, sellerName: chat.seller?.userName, sellerId: chat.seller?._id })}
@@ -59,9 +69,15 @@ const ChatList = () => {
         )
         : (
             <View style={styles.container}>
-                <Text style={styles.headerText}>Mensajes</Text>
+                <Header style={styles.header}>
+                    <Text style={styles.headerText}>Mensajes</Text>
+                </Header>
                 <ScrollView style={styles.scrollView}>
-                    {chatList.length === 0 && <Text>No tienes mensajes</Text>}
+                    {chatList.length === 0 && (
+                        <View style={styles.noMSG}>
+                            <Text style={styles.noMSGText}>No tienes mensajes</Text>
+                        </View>
+                    )}
                     {chatList.map((chat, index) => (
                         <Pressable
                             onPress={() => navigation.navigate(stackRoutesNames.CHAT_SERVICE, { _id: chat._id, userName: chat.client?.userName, clientId: chat.client?._id })}
@@ -91,10 +107,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#fff',
     },
+    header: {
+        width: "100%",
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: 10
+    },
     headerText: {
-        fontSize: 30,
+        fontSize: 25,
         fontWeight: '600',
-        marginBottom: 20,
+        textAlign: 'center',
+        marginLeft: 20
     },
     scrollView: {
         width: '100%',
@@ -124,4 +147,15 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#555',
     },
+    noMSG: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        // backgroundColor: 'blue',
+        height: 500
+    },
+    noMSGText: {
+        fontSize: 20
+    }
+
 });

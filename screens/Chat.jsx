@@ -110,8 +110,6 @@ const Chat = () => {
         bg="transparent"
         color="white"
         rounded={'xl'}
-        marginHorizontal={10}
-        marginVertical={2}
         onPress={() => {
           if (props.text && props.onSend) {
             props.onSend({ text: props.text.trim() }, true);
@@ -152,16 +150,17 @@ const Chat = () => {
 
   return (
     <>
-      <Header style={{ paddingTop: '5%' }}>
-        <Box style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-          {/* <Pressable onPress={() => navigation.goBack()}>
+      <Header style={{ paddingTop: '10%' }}>
+        <Box style={{ flexDirection: "row", alignItems: "center" }}>
+          <Pressable onPress={() => navigation.goBack()}>
             <Icon name="chevron-back" fontFamily="Ionicons" fontSize={28} color="#000" />
-          </Pressable> */}
-          <Button onPress={() => navigation.goBack()}>Regresar</Button>
-          <Text style={{ fontSize: 20, fontWeight: "bold", marginLeft: 20 }}>{sellerName || userName}</Text>
+          </Pressable>
+          {/* <Button onPress={() => navigation.goBack()}>Regresar</Button> */}
+          <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", marginLeft: 20 }}>{sellerName || userName}</Text>
         </Box>
       </Header>
       <GiftedChat
+      containerStyle={{ marginBottom: 10, marginTop: 20 }}
         renderAvatar={() => (
           <Image
             rounded={50}

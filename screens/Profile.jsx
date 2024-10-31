@@ -97,8 +97,8 @@ const Profile = () => {
           // },
           {
             title: "Salir",
-            iconName: "sign-out",
-            fontFamily: "Octicons",
+            iconName: "logout",
+            fontFamily: "AntDesign",
             action: logout,
           },
         ],
@@ -181,7 +181,7 @@ const Profile = () => {
         keyExtractor={(item, index) => item.title + index}
         renderItem={({ item }) => (
           <Pressable onPress={item.action}>
-            <Box flexDir="row" p="sm">
+            <Box flexDir="row" p="sm" alignItems="center">
               <Icon
                 name={item.iconName}
                 fontFamily={item.fontFamily}
@@ -189,7 +189,7 @@ const Profile = () => {
                 color="secondary"
                 mr="sm"
               />
-              <Text fontFamily="Bold" fontSize={16}>
+              <Text fontFamily="Bold" fontSize={16} ml={5}>
                 {item.title}
               </Text>
             </Box>

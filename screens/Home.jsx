@@ -1,10 +1,11 @@
 import React from "react";
-import { Box, Button, Icon, Image, Skeleton, Text } from "react-native-magnus";
+import { Box, Button, Icon, Image, Skeleton, Text, View } from "react-native-magnus";
 import { InfinityScroll, Filter } from "../components";
 import { useFetch } from "../hooks";
 import { ActivityIndicator, Pressable } from "react-native";
 import { navigate } from "../helpers";
 import { stackRoutesNames } from "../routers/stackRoutesNames";
+import { useAuthStore } from "../stores";
 
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
@@ -13,6 +14,8 @@ const Home = () => {
     fetch: true,
     url: "/services/last_adquires",
   });
+
+  const user = useAuthStore((state) => state.userInfo);
 
   return (
     <Box flex={1} w={"90%"} alignSelf="center">
@@ -70,32 +73,35 @@ const Home = () => {
         justifyContent="center"
       >
         {!loading && last_adquires[0] && (
-          <Text fontSize={"md"} fontFamily="Medium" color="gray">
-            Últimas contrataciones
-          </Text>
+          <Box>
+            <Text fontSize={"md"} fontFamily="Medium" color="gray">
+              Últimas contrataciones
+            </Text>
+            <Box flexDir="row">
+              {loading && <ActivityIndicator size={"small"} color={"#000"} />}
+              {Array.isArray(last_adquires) && last_adquires.map((data, i) => (
+                <Pressable
+                  key={data._id + i}
+                  onPress={() => navigate(stackRoutesNames.DETAILS, { data })}
+                >
+                  <Image
+                    rounded={50}
+                    resizeMode="contained"
+                    mr={"lg"}
+                    my={"lg"}
+                    key={data._id}
+                    source={{ uri: apiUrl + `/uploads/service/${data._id}` }}
+                    w={45}
+                    h={45}
+                    loadingIndicatorSource={<Skeleton.Circle h={45} w={45} />}
+                  />
+                </Pressable>
+              ))}
+            </Box>
+          </Box>
         )}
 
-        <Box flexDir="row">
-          {loading && <ActivityIndicator size={"small"} color={"#000"} />}
-          {Array.isArray(last_adquires) && last_adquires.map((data, i) => (
-            <Pressable
-              key={data._id + i}
-              onPress={() => navigate(stackRoutesNames.DETAILS, { data })}
-            >
-              <Image
-                rounded={50}
-                resizeMode="contained"
-                mr={"lg"}
-                my={"lg"}
-                key={data._id}
-                source={{ uri: apiUrl + `/uploads/service/${data._id}` }}
-                w={45}
-                h={45}
-                loadingIndicatorSource={<Skeleton.Circle h={45} w={45} />}
-              />
-            </Pressable>
-          ))}
-        </Box>
+
         <Text fontFamily="Bold" mb={15} fontSize={"lg"}>
           ¡Encuentra los mejores tarotistas!
         </Text>
