@@ -21,7 +21,7 @@ export const SocketProvider = ({ children }) => {
     if (userInfo) {
       socket.connect();
       socket.on('connect', () => {
-        console.log(userInfo);
+        // console.log(userInfo);
         socket.emit("addUsersAppActive", { id: socket.id, userId: userInfo._id, email: userInfo.email, username: userInfo.userName, role: userInfo.role });
         
       });
@@ -32,7 +32,7 @@ export const SocketProvider = ({ children }) => {
 
 
       socket.on('addNotification', (notification) => {
-        console.log(notification);
+        console.log("socket anadir notificacion",notification);
         addNotification(notification);
       });
     }
