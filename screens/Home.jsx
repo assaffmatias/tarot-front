@@ -1,11 +1,13 @@
 import React from "react";
+import { useEffect } from "react";
 import { Box, Button, Icon, Image, Skeleton, Text, View } from "react-native-magnus";
 import { InfinityScroll, Filter } from "../components";
 import { useFetch } from "../hooks";
 import { ActivityIndicator, Pressable } from "react-native";
 import { navigate } from "../helpers";
 import { stackRoutesNames } from "../routers/stackRoutesNames";
-import { useAuthStore } from "../stores";
+import { useAuthStore, useNotificationStore } from "../stores";
+import { api } from "../axios";
 
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
@@ -16,6 +18,24 @@ const Home = () => {
   });
 
   const user = useAuthStore((state) => state.userInfo);
+  const addNotification = useNotificationStore((state) => state.addNotification);
+
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+        try {
+          console.log("estoy por pedir notificaciones con"+user._id);
+          
+            const response = await api.GET(`/notifications/${user._id}`);
+            // console.log("los datos son ",response);
+            response.forEach(notification => addNotification(notification));
+        } catch (error) {
+            console.error('Error fetching notifications:', error);
+        }
+    };
+  
+    fetchNotifications();
+  }, []);
 
   return (
     <Box flex={1} w={"90%"} alignSelf="center">

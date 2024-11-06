@@ -2,16 +2,47 @@ import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Image, ScrollView, Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { stackRoutesNames } from "../routers/stackRoutesNames";
-import { useAuthStore } from "../stores";
+import { useAuthStore, useNotificationStore } from "../stores";
 import { api } from "../axios";
 import { Header } from "react-native-magnus";
+import {useSocket} from "../contexts"
 
 const Notifications = () => {
     const navigation = useNavigation();
+    const { socket } = useSocket();
+    const user = useAuthStore((state) => state.userInfo);
+    const notifications = useNotificationStore((state) => state.notifications);
+    const addNotification = useNotificationStore((state) => state.addNotification);
+    const clearNotification = useNotificationStore((state) => state.clearNotification);
 
-    const notifications = [
-        { text: 'Esta es una notificación' }
-    ]
+    // const notifications = [
+    //     { text: 'Esta es una notificación' }
+    // ]
+    console.log('rendering',notifications)
+    const sendNotification = () => {
+        
+        if (socket){
+            const testNotification = {
+                userId: user._id,
+                email: user.email,
+                message: 'Test notification from ' + user.email,
+            };
+            
+            console.log('Notification pressed and data: ', user);
+            socket.emit('sendNotification', testNotification)
+            
+        }
+    }
+
+    const changePendingNotification = (id) =>{
+        console.log('me han llamado?');
+        
+        if(socket){
+            socket.emit('changePendingNotification',{id,value:false}
+            )
+            clearNotification(id);
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -24,10 +55,34 @@ const Notifications = () => {
                             <Text style={styles.noMSGText}>No tienes notificaciones</Text>
                         </View>
                     )}
+                    <Pressable
+                            key={"HDPSPDSPDSPPSD"}
+                            onPress={sendNotification}
+                            mt="lg"
+                            px="xl"
+                            py="lg"
+                            bg="blue500"
+                            rounded="circle"
+                         >
+                             <Text key={"UNIQUETEXT"}>ADDNOTIFICATION</Text>
+                        </Pressable>
+                        <Text key={"textnOfdsfsTIF"}>SEPARACION BRO</Text>
                 {notifications.map((notif, index) => (
-                    <View>
-                        <Text>{notif.text}</Text>
+                    <View key={"view"+index}>
+                        <Pressable
+                            key={"prFFFF"+index}
+                            onPress={()=>changePendingNotification(notif.id)}
+                            mt="lg"
+                            px="xl"
+                            py="lg"
+                            bg="blue500"
+                            rounded="circle"
+                         >
+                            <Text key={"textnOTIF"+index}>{notif.message}</Text>
+                        </Pressable>
+                        
                     </View>
+                    
                     // <Pressable
                     //     onPress={() => navigation.navigate(stackRoutesNames.CHAT_SERVICE, { _id: chat._id, sellerName: chat.seller?.userName, sellerId: chat.seller?._id })}
                     //     key={index}

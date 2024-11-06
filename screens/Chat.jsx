@@ -7,8 +7,8 @@ import { sendMsg } from "../services/chatService";
 import { useRoute } from "@react-navigation/native";
 import { useAuthStore } from "../stores";
 import { useNavigation } from "@react-navigation/native";
-import { io } from "socket.io-client";
 import { Pressable } from "react-native";
+import { useSocket } from "../contexts";
 
 // Componente para renderizar audios
 const RenderAudio = ({ audio }) => {
@@ -37,6 +37,7 @@ const Chat = () => {
   const user = useAuthStore((state) => state.userInfo);
   const { params } = useRoute();
   const navigation = useNavigation()
+  const {socket} = useSocket();
 
   const sellerName = params?.sellerName || "";
   const userName = params?.userName || "";
@@ -48,6 +49,7 @@ const Chat = () => {
   });
 
   // Hook personalizado para manejar mensajes del socket
+  // const {socket} = useChatSocket({
   useChatSocket({
     GiftedChat,
     setMessages,
@@ -57,8 +59,14 @@ const Chat = () => {
   });
 
   useEffect(() => {
+    // if (user && user.email) {
+    //   initSocket(user);
+    // }
+
+    socket.emit('addUsersActive', { id: socket.id, userId: user._id , email:user.email, username: user.userName, role: user.role });
+
     const handleReceiveMessage = (data) => {
-      console.log(data);
+      console.log('Soy tu handle de Chat.jsx',data);
       setMessages((prevMessages) => GiftedChat.append(prevMessages, [data]));
     };
 
@@ -67,15 +75,19 @@ const Chat = () => {
 
     // Limpiar al desmontar
     return () => {
+      console.log('Desconectando socket');
+      socket.emit('deleteUsersActive', { id: socket.id, userId: user._id, role: user.role});
       socket.off("receiveMessage", handleReceiveMessage);
     };
   }, []);
 
-  const socket = io(process.env.EXPO_PUBLIC_WSS_URL);
+  //NO VA ESTO const socket = io(process.env.EXPO_PUBLIC_WSS_URL);
 
-  socket.on("connect", () => {
-    socket.emit("addUsersActive", { id: socket.id, username: user.email });
-  });
+  // socket.on("connect", () => {
+  //   console.log('Connecting socket');
+    
+  //   socket.emit("addUsersActive", { id: socket.id, username: user.email });
+  // });
 
   // useEffect(() => {
   //   socket.on('recieveMesssage', (data) => console.log(data) )
@@ -87,8 +99,14 @@ const Chat = () => {
     (newMessages = []) => {
       setMessages((previousMessages) => {
         const message = newMessages[newMessages.length - 1];
-        if (params._id)
+        
+        if (params._id){
+          console.log(params);
+          
           socket.emit('newMessage', { to: params.sellerId || params.clientId, message: message })
+          console.log("mensaje enviado bro", params.sellerId, params.clientId);
+        
+        }
         sendMsg({
           _id: params._id,
           msg: {
