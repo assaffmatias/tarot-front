@@ -45,6 +45,8 @@ const PayService = () => {
       price: `${price}.00`,
       service: data._id,
       paypal_id: payerId,
+      client_name: user.userName,
+      seller_name: data.user.userName
     });
   };
 
