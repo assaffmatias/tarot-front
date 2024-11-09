@@ -81,7 +81,7 @@ const Profile = () => {
             title: "Soporte",
             iconName: "support-agent",
             fontFamily: "MaterialIcons",
-            action: () => Linking.openURL("mailto:miqueasledesmadev@gmail.com"),
+            action: () => Linking.openURL("mailto:soporte@arcanoapp.com"),
           },
           // {
           //   title: "Información",

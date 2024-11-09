@@ -1,5 +1,4 @@
-import React from "react";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { Box, Button, Icon, Image, Skeleton, Text, View } from "react-native-magnus";
 import { InfinityScroll, Filter } from "../components";
 import { useFetch } from "../hooks";
@@ -8,6 +7,8 @@ import { navigate } from "../helpers";
 import { stackRoutesNames } from "../routers/stackRoutesNames";
 import { useAuthStore, useNotificationStore } from "../stores";
 import { api } from "../axios";
+import { Dimensions } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
@@ -17,25 +18,36 @@ const Home = () => {
     url: "/services/last_adquires",
   });
 
+  const navigation = useNavigation()
+
+  const { width } = Dimensions.get("window");
+  const scale = width / 375;
+  const scaleFontSize = (size) => size * scale;
+
+  const notif = useNotificationStore((state) => state.notifications);
   const user = useAuthStore((state) => state.userInfo);
   const addNotification = useNotificationStore((state) => state.addNotification);
 
-
   useEffect(() => {
     const fetchNotifications = async () => {
-        try {
-          console.log("estoy por pedir notificaciones con"+user._id);
-          
-            const response = await api.GET(`/notifications/${user._id}`);
-            // console.log("los datos son ",response);
-            response.forEach(notification => addNotification(notification));
-        } catch (error) {
-            console.error('Error fetching notifications:', error);
-        }
+      try {
+        console.log("estoy por pedir notificaciones con" + user._id);
+        const response = await api.GET(`/notifications/${user._id}`);
+        console.log("los datos son ", response);
+        response.forEach(notification => addNotification(notification));
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+      }
     };
-  
     fetchNotifications();
   }, []);
+
+  // Verificar que el estado de userInfo está correctamente inicializado
+if (!user) {
+ navigation.navigate(stackRoutesNames.LOGIN)
+}
+
+  console.log('NOTIF length', notif.length);
 
   return (
     <Box flex={1} w={"90%"} alignSelf="center">
@@ -61,9 +73,12 @@ const Home = () => {
           <Icon
             fontFamily="Ionicons"
             name="notifications"
-            fontSize={25}
+            fontSize={scaleFontSize(25)}
             color="pink"
           />
+          {notif.length >= 1 && (
+            <Text style={{ position: 'absolute', bottom: 10, left: 10, color: '#191970', fontSize: scaleFontSize(20) }}>●</Text>
+          )}
         </Button>
 
         <Button
@@ -92,7 +107,8 @@ const Home = () => {
         alignSelf="center"
         justifyContent="center"
       >
-        {!loading && last_adquires[0] && (
+        {/* Verificación del rol antes de mostrar "Últimas contrataciones" */}
+        {!loading && last_adquires[0] && user.role !== "USER_TAROT" && (
           <Box>
             <Text fontSize={"md"} fontFamily="Medium" color="gray">
               Últimas contrataciones
@@ -120,7 +136,6 @@ const Home = () => {
             </Box>
           </Box>
         )}
-
 
         <Text fontFamily="Bold" mb={15} fontSize={"lg"}>
           ¡Encuentra los mejores tarotistas!

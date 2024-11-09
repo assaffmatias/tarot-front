@@ -1,6 +1,6 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { HeaderDetails, Review } from "../components";
-import { Box, Button, Image, ScrollDiv, Tag, Text } from "react-native-magnus";
+import { Box, Button, Image, ScrollDiv, Tag, Text, Input } from "react-native-magnus";
 import { useRoute } from "@react-navigation/native";
 import { useFetch } from "../hooks";
 import { ActivityIndicator } from "react-native";
@@ -8,12 +8,28 @@ import NewComment from "../components/NewComment";
 import { navigate } from "../helpers";
 import { stackRoutesNames } from "../routers/stackRoutesNames";
 import CustomSelect from "../components/CustomSelect"; // Importa el CustomSelect
+import { useAuthStore } from "../stores";
+import axios from "axios";
+import { api } from "../axios";
 
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+
+const config = {
+  headers: {
+    "Content-Type": "multipart/form-data",
+  },
+  onUploadProgress: (progressEvent) => {
+    const percentCompleted = Math.round(
+      (progressEvent.loaded * 100) / progressEvent.total
+    );
+    console.log(`Progreso: ${percentCompleted}%`);
+  },
+};
 
 const Details = ({}) => {
   const route = useRoute();
   const { data = {} } = route.params;
+  const user = useAuthStore((state) => state.userInfo);
 
   const { data: reviews, loading } = useFetch({
     fetch: true,
@@ -22,14 +38,22 @@ const Details = ({}) => {
 
   const [minutes, setMinutes] = useState(1);
   const [price, setPrice] = useState(data.price);
-
-  // Opciones para el selector
-  const options = [1, 2, 3, 4, 5, 10, 20, 30, 40, 50, 60];
+  const [newPrice, setNewPrice] = useState(data.price);
+  const isSelfProfile = user?._id === data.user._id;
 
   const handleSelect = (selectedMinutes) => {
     setMinutes(selectedMinutes);
-    const newPrice = selectedMinutes * data.price;
-    setPrice(newPrice);
+    const newCalculatedPrice = selectedMinutes * data.price;
+    setPrice(newCalculatedPrice);
+  };
+
+  const handleSavePrice = async () => {
+    try {
+      await api.PUT(`/services/update/${data._id}`, { price: newPrice });
+      alert("Precio actualizado con éxito");
+    } catch (error) {
+      alert("Error al actualizar el precio");
+    }
   };
 
   return (
@@ -74,26 +98,42 @@ const Details = ({}) => {
         <NewComment />
       </ScrollDiv>
 
-      {/* Selector de minutos */}
       <Box w={"90%"} alignSelf="center" my="lg">
-        <CustomSelect
-          title="Selecciona los minutos"
-          placeholder="Selecciona"
-          options={options} // Pasa las opciones
-          setForm={(name, value) => handleSelect(value)} // Actualiza el estado al seleccionar
-          form={{ lorem: minutes }} // Puedes usar esto para manejar el estado del formulario
-          selected={minutes} // Valor seleccionado
-          name="minutes" // Nombre del campo
-        />
-        
-        <Text fontFamily="Regular" fontSize={"xl"} color="gray-dark" mt="lg">
-          Precio total: ${price}
-        </Text>
+        {isSelfProfile ? (
+          // Si es el tarotista viendo su propio perfil, muestra el input para editar el precio
+          <Box>
+            <Text fontFamily="Regular" fontSize={"xl"} color="gray-dark" mt="lg" mb={'lg'}>
+              Editar precio del servicio:
+            </Text>
+            <Input
+              value={newPrice.toString()}
+              onChangeText={setNewPrice}
+              keyboardType="numeric"
+              placeholder="Introduce el nuevo precio"
+            />
+          </Box>
+        ) : (
+          // Si es otro usuario, muestra el selector de minutos y el precio calculado
+          <>
+            <CustomSelect
+              title="Selecciona los minutos"
+              placeholder="Selecciona"
+              options={[1, 2, 3, 4, 5, 10, 20, 30, 40, 50, 60]}
+              setForm={(name, value) => handleSelect(value)}
+              form={{ lorem: minutes }}
+              selected={minutes}
+              name="minutes"
+            />
+            <Text fontFamily="Regular" fontSize={"xl"} color="gray-dark" mt="lg">
+              Precio total: ${price}
+            </Text>
+          </>
+        )}
       </Box>
 
-      {/* Botón para contratar */}
+      {/* Botón para contratar o guardar cambios */}
       <Button
-        onPress={() => navigate(stackRoutesNames.PAY_SERVICE, { data, price })}
+        onPress={isSelfProfile ? handleSavePrice : () => navigate(stackRoutesNames.PAY_SERVICE, { data, price })}
         rounded={10}
         bg="primary"
         color="#000"
@@ -102,7 +142,7 @@ const Details = ({}) => {
         alignSelf="center"
         my={"lg"}
       >
-        <Text color="#000">¡Contratar!</Text>
+        <Text color="#000">{isSelfProfile ? "Guardar cambios" : "¡Contratar!"}</Text>
       </Button>
     </>
   );

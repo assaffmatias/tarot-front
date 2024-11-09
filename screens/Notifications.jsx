@@ -1,44 +1,45 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Image, ScrollView, Pressable } from "react-native";
+import { View, Text, StyleSheet, Pressable, Image, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { stackRoutesNames } from "../routers/stackRoutesNames";
 import { useAuthStore, useNotificationStore } from "../stores";
-import { api } from "../axios";
+import { useSocket } from "../contexts";
+import { FontAwesome } from '@expo/vector-icons';  // Importar iconos de FontAwesome
 import { Header } from "react-native-magnus";
-import {useSocket} from "../contexts"
 
 const Notifications = () => {
     const navigation = useNavigation();
     const { socket } = useSocket();
     const user = useAuthStore((state) => state.userInfo);
     const notifications = useNotificationStore((state) => state.notifications);
-    const addNotification = useNotificationStore((state) => state.addNotification);
     const clearNotification = useNotificationStore((state) => state.clearNotification);
 
-    // const notifications = [
-    //     { text: 'Esta es una notificación' }
-    // ]
-    console.log('rendering',notifications)
-    const sendNotification = () => {
-        
-        if (socket){
-            const testNotification = {
-                userId: user._id,
-                email: user.email,
-                message: 'Test notification from ' + user.email,
-            };
-            
-            console.log('Notification pressed and data: ', user);
-            socket.emit('sendNotification', testNotification)
-            
-        }
-    }
+    //   const changePendingNotification = (id) => {
+    //     if (socket) {
+    //       socket.emit("changePendingNotification", { id, value: false });
+    //       clearNotification(id); // Eliminar la notificación del estado
+    //     }
+    //   };
 
-    const changePendingNotification = (id) =>{
+    // const sendNotification = () => {
+
+    //     if (socket) {
+    //         const testNotification = {
+    //             userId: user._id,
+    //             email: user.email,
+    //             message: 'Test notification from ' + user.email,
+    //         };
+
+    //         console.log('Notification pressed and data: ', user);
+    //         socket.emit('sendNotification', testNotification)
+
+    //     }
+    // }
+
+    const changePendingNotification = (id) => {
         console.log('me han llamado?');
-        
-        if(socket){
-            socket.emit('changePendingNotification',{id,value:false}
+
+        if (socket) {
+            socket.emit('changePendingNotification', { id, value: false }
             )
             clearNotification(id);
         }
@@ -51,55 +52,23 @@ const Notifications = () => {
             </Header>
             <ScrollView style={styles.scrollView}>
                 {notifications.length === 0 && (
-                        <View style={styles.noMSG}>
-                            <Text style={styles.noMSGText}>No tienes notificaciones</Text>
-                        </View>
-                    )}
-                    <Pressable
-                            key={"HDPSPDSPDSPPSD"}
-                            onPress={sendNotification}
-                            mt="lg"
-                            px="xl"
-                            py="lg"
-                            bg="blue500"
-                            rounded="circle"
-                         >
-                             <Text key={"UNIQUETEXT"}>ADDNOTIFICATION</Text>
-                        </Pressable>
-                        <Text key={"textnOfdsfsTIF"}>SEPARACION BRO</Text>
-                {notifications.map((notif, index) => (
-                    <View key={"view"+index}>
-                        <Pressable
-                            key={"prFFFF"+index}
-                            onPress={()=>changePendingNotification(notif.id)}
-                            mt="lg"
-                            px="xl"
-                            py="lg"
-                            bg="blue500"
-                            rounded="circle"
-                         >
-                            <Text key={"textnOTIF"+index}>{notif.message}</Text>
-                        </Pressable>
-                        
+                    <View style={styles.noMSG}>
+                        <Text style={styles.noMSGText}>No tienes notificaciones</Text>
                     </View>
-                    
-                    // <Pressable
-                    //     onPress={() => navigation.navigate(stackRoutesNames.CHAT_SERVICE, { _id: chat._id, sellerName: chat.seller?.userName, sellerId: chat.seller?._id })}
-                    //     key={index}
-                    //     style={styles.userContainer}>
-                    //     <Image
-                    //         source={{ uri: chat.seller?.image || 'https://static.vecteezy.com/system/resources/previews/005/129/844/non_2x/profile-user-icon-isolated-on-white-background-eps10-free-vector.jpg' }}
-                    //         style={styles.userImage}
-                    //     />
-                    //     <View style={styles.textContainer}>
-                    //         <Text style={styles.userName}>{chat.seller?.userName}</Text>
-                    //         <Text style={styles.userMsg}>{truncateMessage(chat.service.description)}</Text>
-                    //     </View>
-                    // </Pressable>
+                )}
+                {notifications.map((notif, index) => (
+                    <View key={notif.id} style={styles.notificationContainer}>
+                        <View style={styles.notificationTextContainer}>
+                            <Text style={styles.notificationText}>{notif.message}</Text>
+                        </View>
+                        <Pressable onPress={() => changePendingNotification(notif._id)} style={styles.deleteButton}>
+                            <FontAwesome name="trash" size={20} color="red" />
+                        </Pressable>
+                    </View>
                 ))}
             </ScrollView>
         </View>
-    )
+    );
 };
 
 export default Notifications;
@@ -115,48 +84,58 @@ const styles = StyleSheet.create({
         width: "100%",
         alignItems: "center",
         justifyContent: "center",
-        marginBottom: 20
+        marginBottom: 20,
+        paddingHorizontal: 20
     },
     headerText: {
         fontSize: 30,
         fontWeight: '600',
-        textAlign: 'center'
+        textAlign: 'center',
+        color: '#191970', // Color personalizado para el encabezado
     },
     scrollView: {
         width: '100%',
         paddingHorizontal: 20,
     },
-    userContainer: {
+    notificationContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingVertical: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ccc',
+        paddingVertical: 15,
+        marginVertical: 10,
+        borderRadius: 10,
+        backgroundColor: '#f0f0f0', // Fondo suave para cada notificación
+        paddingHorizontal: 15,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 3, // Para dar efecto de sombra en Android
     },
-    userImage: {
-        width: 50,
-        height: 50,
-        borderRadius: 25,
-        marginRight: 15,
-    },
-    textContainer: {
+    notificationTextContainer: {
         flex: 1,
+        marginRight: 10,
     },
-    userName: {
-        fontSize: 18,
-        fontWeight: '600',
+    notificationText: {
+        fontSize: 16,
+        fontWeight: '500',
+        color: '#333',
+        lineHeight: 22,
     },
-    userMsg: {
-        fontSize: 14,
-        color: '#555',
+    deleteButton: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 10,
+        borderRadius: 25,
+        backgroundColor: '#ffe6e6', // Fondo suave para el botón de eliminar
     },
     noMSG: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        height: 500
+        height: 500,
     },
     noMSGText: {
-        fontSize: 20
-    }
+        fontSize: 20,
+        color: '#888',
+    },
 });

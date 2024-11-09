@@ -9,5 +9,6 @@ export const stackRoutesNames = {
   PAY_SERVICE: "Comprar",
   CHAT_SERVICE: "Chat",
   CHAT_LIST: "ChatList",
-  NOTIFICATIONS: "Notifications"
+  NOTIFICATIONS: "Notifications",
+  CHAT_IA: 'ChatIA'
 };

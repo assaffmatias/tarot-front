@@ -4,13 +4,17 @@ import { View, ActivityIndicator } from "react-native";
 import { api } from "../axios";
 import { useAuthStore } from "../stores";
 import { useRoute } from "@react-navigation/native";
+import { useSocket } from "../contexts";
+import { stackRoutesNames } from "../routers/stackRoutesNames";
+import { useNavigation } from "@react-navigation/native";
 
-const PayService = ({ navigation }) => {
+const PayService = () => {
   const [loading, setLoading] = useState(true);
   const [approvalUrl, setApprovalUrl] = useState(null);
-
+  const { socket } = useSocket();
   const user = useAuthStore((state) => state.userInfo);
   const route = useRoute();
+  const navigation = useNavigation()
 
   const { data = {}, price } = route.params || {};
 
@@ -21,6 +25,8 @@ const PayService = ({ navigation }) => {
         const response = await api.POST("/transaction", {
           currency: "USD",
           amount: `${price}.00`,
+          // client: user._id,
+          // seller: data.user._id
         });
         setApprovalUrl(response.approvalUrl);
       } catch (error) {
@@ -57,8 +63,13 @@ const PayService = ({ navigation }) => {
           onLoad={() => setLoading(false)}
           onNavigationStateChange={(event) => {
             if (event.url.includes("success")) {
-              alert("Pago completado");
+              alert(`Pago exitoso!`);
               successTransaction(event.url);
+              navigation.navigate(stackRoutesNames.HOME);
+            }
+            if (event.url.includes("cancel")) {
+              alert(`Pago cancelado!`);
+              // successTransaction(event.url);
               navigation.goBack();
             }
           }}

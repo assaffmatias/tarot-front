@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Alert, Animated, Pressable } from "react-native";
 import { Box, ScrollDiv, Text } from "react-native-magnus";
 import { Dimensions } from "react-native";
@@ -30,43 +30,70 @@ const Oraculos2 = () => {
     "Septiembre", "Octubre", "Noviembre", "Diciembre", "Enero", "Febrero"
   ];
 
-  // Crear un array para las animaciones de vibración (movimiento horizontal)
-  const animations = images.map(() => useState(new Animated.Value(0))[0]);
+  // Crear un array para las animaciones de las cartas
+  const animations = images.map(() => ({
+    opacity: new Animated.Value(0),
+    translateY: new Animated.Value(30), // Desplazamiento hacia abajo
+  }));
+
+  // Función para iniciar la animación de entrada para cada carta y su texto
+  useEffect(() => {
+    Animated.stagger(100, // Intervalo entre animaciones de cartas
+      animations.map(animation => 
+        Animated.parallel([
+          Animated.timing(animation.opacity, {
+            toValue: 1, // Desaparecer hasta completamente visible
+            duration: 500,
+            useNativeDriver: true,
+          }),
+          Animated.timing(animation.translateY, {
+            toValue: 0, // Desplazarse hasta la posición final
+            duration: 500,
+            useNativeDriver: true,
+          })
+        ])
+      )
+    ).start();
+  }, []);
+
+  // const handlePress = (index) => {
+  //   if (inProcess) return;
+  //   setInProcess(true);
+
+  //   const vibrationAnimation = Animated.loop(
+  //     Animated.sequence([
+  //       Animated.timing(animations[index].translateY, {
+  //         toValue: 5, // Mueve 5px hacia abajo
+  //         duration: 100,
+  //         useNativeDriver: true,
+  //       }),
+  //       Animated.timing(animations[index].translateY, {
+  //         toValue: -5, // Mueve 5px hacia arriba
+  //         duration: 100,
+  //         useNativeDriver: true,
+  //       }),
+  //     ]),
+  //     { iterations: -1 }
+  //   );
+
+  //   // Iniciar la animación de vibración
+  //   vibrationAnimation.start();
+
+  //   // Detener la vibración después de 1 segundo
+  //   setTimeout(() => {
+  //     vibrationAnimation.stop();
+  //     Animated.timing(animations[index].translateY, {
+  //       toValue: 0,
+  //       duration: 100,
+  //       useNativeDriver: true,
+  //     }).start();
+  //     setInProcess(false);
+  //     Alert.alert("Aqui se abre el modal con el horoscopo");
+  //   }, 1000);
+  // };
 
   const handlePress = (index) => {
-    if (inProcess) return;
-    setInProcess(true);
-
-    const vibrationAnimation = Animated.loop(
-      Animated.sequence([
-        Animated.timing(animations[index], {
-          toValue: 5, // Mueve 5px hacia la derecha
-          duration: 100,
-          useNativeDriver: true,
-        }),
-        Animated.timing(animations[index], {
-          toValue: -5, // Mueve 5px hacia la izquierda
-          duration: 100,
-          useNativeDriver: true,
-        }),
-      ]),
-      { iterations: -1 }
-    );
-
-    // Iniciar la animación de vibración
-    vibrationAnimation.start();
-
-    // Detener la vibración después de 1 segundo
-    setTimeout(() => {
-      vibrationAnimation.stop();
-      Animated.timing(animations[index], {
-        toValue: 0,
-        duration: 100,
-        useNativeDriver: true,
-      }).start();
-      setInProcess(false);
-      Alert.alert("Aqui se abre el modal con el horoscopo");
-    }, 1000);
+    Alert.alert("Aqui se abre el modal con el horoscopo");
   };
 
   return (
@@ -89,14 +116,24 @@ const Oraculos2 = () => {
                   style={{
                     width: width * 0.3,
                     height: height * 0.24,
-                    transform: [{ translateX: animations[index] }],
+                    opacity: animations[index].opacity, // Animación de opacidad
+                    transform: [{ translateY: animations[index].translateY }], // Animación de movimiento vertical
                   }}
                   resizeMode="contain"
                 />
               </Pressable>
-              <Text color="white" fontSize="2xl" textAlign="center" fontWeight="bold">
+              <Animated.Text 
+                style={{
+                  color: "white",
+                  fontSize: 20,
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  opacity: animations[index].opacity, // Mismo efecto de opacidad
+                  transform: [{ translateY: animations[index].translateY }], // Mismo movimiento vertical
+                }}
+              >
                 {months[index]}
-              </Text>
+              </Animated.Text>
             </Box>
           ))}
         </Box>
