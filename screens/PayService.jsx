@@ -12,7 +12,7 @@ const PayService = ({ navigation }) => {
   const user = useAuthStore((state) => state.userInfo);
   const route = useRoute();
 
-  const { data = {}, price } = route.params || {};
+  const { data = {}, price, through } = route.params || {};
 
   useEffect(() => {
     // Llama a la API para obtener el approvalUrl solo una vez
@@ -27,19 +27,48 @@ const PayService = ({ navigation }) => {
         console.error("Error al obtener approvalUrl:", error);
       }
     };
-
-    createPayment();
+    const createPaymentStripe = async () => {
+      try {
+        const response = await api.POST("/transaction/cc", {
+          currency: "USD",
+          amount: `${price}.00`,
+        });
+        console.log(response.approvalUrl);
+        setApprovalUrl(response.approvalUrl);
+      } catch (error) {
+        console.error("Error al obtener approvalUrl:", error);
+      }
+    };
+    console.log(through);
+    if (through === "paypal") createPayment();
+    else if (through === "stripe") createPaymentStripe();
   }, []);
 
   const successTransaction = async (url) => {
-    const payerId = url.split("=")[2];
-    await api.POST("/transaction/success", {
-      client: user._id,
-      seller: data.user._id,
-      price: `${price}.00`,
-      service: data._id,
-      paypal_id: payerId,
-    });
+    console.log(url);
+
+    const urlObj = new URL(url);
+    console.log(urlObj.pathname);
+    
+    if (urlObj.pathname === "/success/cc") {
+      await api.POST("/transaction/success/cc", {
+        client: user._id,
+        seller: data.user._id,
+        price: `${price}.00`,
+        service: data._id,
+      });
+    } else if (urlObj.pathname === "/success") {
+      const token = urlObj.searchParams.get("token");
+      const payerId = urlObj.searchParams.get("PayerID");
+      await api.POST("/transaction/success", {
+        client: user._id,
+        seller: data.user._id,
+        price: `${price}.00`,
+        service: data._id,
+        token: token,
+        paypal_id: payerId,
+      });
+    }
   };
 
   return (
