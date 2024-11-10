@@ -23,7 +23,8 @@ const CardComponent = ({ data }) => {
           h={429}
           maxW={397}
           w={"100%"}
-          source={{ uri: apiUrl + `/uploads/service/${data._id}` }}
+          // source={{ uri: apiUrl + `/uploads/service/${data._id}` }}
+          source={{ uri: 'https://media.lmneuquen.com/p/483fc38db569a6f012e7492d6e6e64d0/adjuntos/195/imagenes/007/420/0007420976/770x0/smart/jimena-la-torrejpg.jpeg' }}
         />
 
         <Box style={style.blurView} intensity={11}>

@@ -103,7 +103,7 @@ export default ChatList;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: '5%',
+        // paddingTop: '5%',
         alignItems: 'center',
         backgroundColor: '#fff',
     },
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
         fontSize: 25,
         fontWeight: '600',
         textAlign: 'center',
-        marginLeft: 20
+        marginLeft: 20,
     },
     scrollView: {
         width: '100%',

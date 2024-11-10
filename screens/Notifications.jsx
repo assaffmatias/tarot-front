@@ -61,9 +61,9 @@ const Notifications = () => {
                         <View style={styles.notificationTextContainer}>
                             <Text style={styles.notificationText}>{notif.message}</Text>
                         </View>
-                        <Pressable onPress={() => changePendingNotification(notif._id)} style={styles.deleteButton}>
+                        {/* <Pressable onPress={() => changePendingNotification(notif._id)} style={styles.deleteButton}>
                             <FontAwesome name="trash" size={20} color="red" />
-                        </Pressable>
+                        </Pressable> */}
                     </View>
                 ))}
             </ScrollView>
@@ -76,7 +76,7 @@ export default Notifications;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: '5%',
+        // paddingTop: '5%',
         alignItems: 'center',
         backgroundColor: '#fff',
     },
@@ -92,6 +92,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         textAlign: 'center',
         color: '#191970', // Color personalizado para el encabezado
+        paddingTop: '3%'
     },
     scrollView: {
         width: '100%',
