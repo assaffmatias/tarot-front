@@ -55,6 +55,20 @@ const Oraculos = () => {
 
   const isSelected = (card) => selectedCards.some(selected => selected.name === card.name);
 
+  const handleNextPress = () => {
+    // Verificar si la cantidad de cartas seleccionadas es 1, 3 o 5
+    if (selectedCards.length === 1 || selectedCards.length === 3 || selectedCards.length === 5) {
+      // Pasar la cantidad de cartas y los nombres de las cartas seleccionadas al siguiente componente
+      const selectedCardNames = selectedCards.map(card => card.name); // Extraer solo los nombres de las cartas seleccionadas
+      navigation.navigate(stackRoutesNames.CHAT_IA, {
+        selectedCardCount: selectedCards.length,
+        selectedCardNames: selectedCardNames
+      });
+    } else {
+      Alert.alert("Selección inválida", "Debes seleccionar 1, 3 o 5 cartas.");
+    }
+  };
+
   return (
     <>
       <Animated.Image
@@ -101,7 +115,7 @@ const Oraculos = () => {
             alignSelf="center"
             rounded={35}
             mb={40}
-            onPress={() => navigation.navigate(stackRoutesNames.CHAT_IA)}
+            onPress={handleNextPress}
           >
             Siguiente
           </Button>

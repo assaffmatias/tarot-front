@@ -13,6 +13,13 @@ const Notifications = () => {
     const notifications = useNotificationStore((state) => state.notifications);
     const clearNotification = useNotificationStore((state) => state.clearNotification);
 
+    // Formatear la fecha
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' };
+        return new Intl.DateTimeFormat('es-ES', options).format(date);
+    };
+
     //   const changePendingNotification = (id) => {
     //     if (socket) {
     //       socket.emit("changePendingNotification", { id, value: false });
@@ -45,6 +52,9 @@ const Notifications = () => {
         }
     }
 
+    console.log(notifications);
+
+
     return (
         <View style={styles.container}>
             <Header style={styles.header}>
@@ -60,10 +70,12 @@ const Notifications = () => {
                     <View key={notif.id} style={styles.notificationContainer}>
                         <View style={styles.notificationTextContainer}>
                             <Text style={styles.notificationText}>{notif.message}</Text>
+                            {/* Formato de fecha */}
+                            <Text style={styles.notificationDate}>{formatDate(notif.createdAt)}</Text>
                         </View>
-                        {/* <Pressable onPress={() => changePendingNotification(notif._id)} style={styles.deleteButton}>
+                        <Pressable onPress={() => changePendingNotification(notif._id)} style={styles.deleteButton}>
                             <FontAwesome name="trash" size={20} color="red" />
-                        </Pressable> */}
+                        </Pressable>
                     </View>
                 ))}
             </ScrollView>
@@ -105,7 +117,8 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         borderRadius: 10,
         backgroundColor: '#f0f0f0', // Fondo suave para cada notificación
-        paddingHorizontal: 15,
+        paddingHorizontal: 10,
+        // paddingLeft: 10,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
@@ -121,12 +134,19 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         color: '#333',
         lineHeight: 22,
+        // marginRight: 5
+    },
+    notificationDate: {
+        fontSize: 12,
+        color: '#888',
+        marginTop: 10,
+        // textAlign: "right"
     },
     deleteButton: {
         justifyContent: 'center',
         alignItems: 'center',
         padding: 10,
-        borderRadius: 25,
+        borderRadius: 15,
         backgroundColor: '#ffe6e6', // Fondo suave para el botón de eliminar
     },
     noMSG: {

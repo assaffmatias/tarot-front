@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Alert, Animated, Pressable } from "react-native";
 import { Box, ScrollDiv, Text } from "react-native-magnus";
 import { Dimensions } from "react-native";
+import { api } from "../axios"
 
 const { width, height } = Dimensions.get("window");
 
 const Oraculos2 = () => {
   const [inProcess, setInProcess] = useState(false);
+  const [cards, setCards] = useState([]);
 
   // Array de las imágenes
   const images = [
@@ -30,70 +32,37 @@ const Oraculos2 = () => {
     "Septiembre", "Octubre", "Noviembre", "Diciembre", "Enero", "Febrero"
   ];
 
-  // Crear un array para las animaciones de las cartas
-  const animations = images.map(() => ({
-    opacity: new Animated.Value(0),
-    translateY: new Animated.Value(30), // Desplazamiento hacia abajo
-  }));
-
-  // Función para iniciar la animación de entrada para cada carta y su texto
   useEffect(() => {
-    Animated.stagger(100, // Intervalo entre animaciones de cartas
-      animations.map(animation => 
-        Animated.parallel([
-          Animated.timing(animation.opacity, {
-            toValue: 1, // Desaparecer hasta completamente visible
-            duration: 500,
-            useNativeDriver: true,
-          }),
-          Animated.timing(animation.translateY, {
-            toValue: 0, // Desplazarse hasta la posición final
-            duration: 500,
-            useNativeDriver: true,
-          })
-        ])
-      )
-    ).start();
-  }, []);
+    // Obtén las cartas de la API
+    const fetchCards = async () => {
+      const data = await api.GET("/card"); // Ajusta la ruta si es necesario
+      setCards(data); // Suponiendo que la respuesta es un array de cartas
+    };
+
+    fetchCards();
+  }, [])
+
+  console.log(cards);
+
 
   // const handlePress = (index) => {
-  //   if (inProcess) return;
-  //   setInProcess(true);
-
-  //   const vibrationAnimation = Animated.loop(
-  //     Animated.sequence([
-  //       Animated.timing(animations[index].translateY, {
-  //         toValue: 5, // Mueve 5px hacia abajo
-  //         duration: 100,
-  //         useNativeDriver: true,
-  //       }),
-  //       Animated.timing(animations[index].translateY, {
-  //         toValue: -5, // Mueve 5px hacia arriba
-  //         duration: 100,
-  //         useNativeDriver: true,
-  //       }),
-  //     ]),
-  //     { iterations: -1 }
-  //   );
-
-  //   // Iniciar la animación de vibración
-  //   vibrationAnimation.start();
-
-  //   // Detener la vibración después de 1 segundo
-  //   setTimeout(() => {
-  //     vibrationAnimation.stop();
-  //     Animated.timing(animations[index].translateY, {
-  //       toValue: 0,
-  //       duration: 100,
-  //       useNativeDriver: true,
-  //     }).start();
-  //     setInProcess(false);
-  //     Alert.alert("Aqui se abre el modal con el horoscopo");
-  //   }, 1000);
+  //   Alert.alert("Aqui se abre el modal con el horoscopo");
   // };
 
-  const handlePress = (index) => {
-    Alert.alert("Aqui se abre el modal con el horoscopo");
+  // Manejador de presionado, muestra el texto asociado con la carta
+  const handlePress = (month) => {
+    const id = month.charAt(0).toLowerCase() + month.slice(1); // Convertir la primera letra a minúscula
+    const card = cards.find(c => c.id === id); // Busca la carta por su id
+    if (card) {
+      Alert.alert("Horóscopo", card.text); // Muestra el texto en el alert
+    } else {
+      Alert.alert("Sin datos", "No se encontró una carta para este mes.");
+    }
+
+    // const card = cards.find(c => c.id === id); // Busca la carta por su id
+    // if (card) {
+    //   Alert.alert("Horóscopo", card.text); // Muestra el texto en el alert
+    // }
   };
 
   return (
@@ -110,26 +79,22 @@ const Oraculos2 = () => {
         <Box flexDirection="row" flexWrap="wrap" justifyContent="space-between" padding="lg">
           {images.map((img, index) => (
             <Box key={index} alignItems="center" marginBottom="lg">
-              <Pressable onPress={() => handlePress(index)}>
+              <Pressable onPress={() => handlePress(months[index])}>
                 <Animated.Image
                   source={img}
                   style={{
                     width: width * 0.3,
                     height: height * 0.24,
-                    opacity: animations[index].opacity, // Animación de opacidad
-                    transform: [{ translateY: animations[index].translateY }], // Animación de movimiento vertical
                   }}
                   resizeMode="contain"
                 />
               </Pressable>
-              <Animated.Text 
+              <Animated.Text
                 style={{
                   color: "white",
                   fontSize: 20,
                   textAlign: "center",
                   fontWeight: "bold",
-                  opacity: animations[index].opacity, // Mismo efecto de opacidad
-                  transform: [{ translateY: animations[index].translateY }], // Mismo movimiento vertical
                 }}
               >
                 {months[index]}
