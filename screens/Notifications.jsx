@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useAuthStore, useNotificationStore } from "../stores";
 import { useSocket } from "../contexts";
 import { FontAwesome } from '@expo/vector-icons';  // Importar iconos de FontAwesome
-import { Header } from "react-native-magnus";
+// import { Header } from "react-native-magnus";
 
 const Notifications = () => {
     const navigation = useNavigation();
@@ -57,9 +57,9 @@ const Notifications = () => {
 
     return (
         <View style={styles.container}>
-            <Header style={styles.header}>
+            <View style={styles.header}>
                 <Text style={styles.headerText}>Notificaciones</Text>
-            </Header>
+            </View>
             <ScrollView style={styles.scrollView}>
                 {notifications.length === 0 && (
                     <View style={styles.noMSG}>
@@ -71,7 +71,7 @@ const Notifications = () => {
                         <View style={styles.notificationTextContainer}>
                             <Text style={styles.notificationText}>{notif.message}</Text>
                             {/* Formato de fecha */}
-                            <Text style={styles.notificationDate}>{formatDate(notif.createdAt)}</Text>
+                            {/* <Text style={styles.notificationDate}>{formatDate(notif.createdAt)}</Text> */}
                         </View>
                         <Pressable onPress={() => changePendingNotification(notif._id)} style={styles.deleteButton}>
                             <FontAwesome name="trash" size={20} color="red" />
@@ -96,6 +96,7 @@ const styles = StyleSheet.create({
         width: "100%",
         alignItems: "center",
         justifyContent: "center",
+        marginTop: 40,
         marginBottom: 20,
         paddingHorizontal: 20
     },

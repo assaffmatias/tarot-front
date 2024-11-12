@@ -26,7 +26,7 @@ const config = {
   },
 };
 
-const Details = ({}) => {
+const Details = ({ }) => {
   const route = useRoute();
   const { data = {} } = route.params;
   const user = useAuthStore((state) => state.userInfo);
@@ -94,68 +94,92 @@ const Details = ({}) => {
             {loading && <ActivityIndicator size={25} color={"#000"} />}
           </Box>
         </Box>
-        
+
         <NewComment />
+
+
+        <Box w={"90%"} alignSelf="center" my="lg">
+          {isSelfProfile ? (
+            // Si es el tarotista viendo su propio perfil, muestra el input para editar el precio
+            <Box>
+              <Text fontFamily="Regular" fontSize={"xl"} color="gray-dark" mt="lg" mb={'lg'}>
+                Editar precio del servicio:
+              </Text>
+              <Input
+                value={newPrice.toString()}
+                onChangeText={setNewPrice}
+                keyboardType="numeric"
+                placeholder="Introduce el nuevo precio"
+              />
+            </Box>
+          ) : (
+            // Si es otro usuario, muestra el selector de minutos y el precio calculado
+            <>
+              <CustomSelect
+                title="Selecciona los minutos"
+                placeholder="Selecciona"
+                options={[1, 2, 3, 4, 5, 10, 20, 30, 40, 50, 60]}
+                setForm={(name, value) => handleSelect(value)}
+                form={{ lorem: minutes }}
+                selected={minutes}
+                name="minutes"
+              />
+              <Text fontFamily="Regular" fontSize={"xl"} color="gray-dark" mt="lg">
+                Precio total: ${price}
+              </Text>
+            </>
+          )}
+        </Box>
+
+        {
+          isSelfProfile ? (
+            <Button
+              onPress={handleSavePrice}
+              rounded={10}
+              bg="primary"
+              color="#000"
+              fontFamily="Bold"
+              px={"2xl"}
+              alignSelf="center"
+              my={"lg"}
+            >
+              <Text color="#000">Guardar cambios</Text>
+            </Button>
+          ) :
+            (
+              <Box flexDir="row" justifyContent="center">
+                <Button
+                  onPress={() => navigate(stackRoutesNames.PAY_SERVICE, { data, price, through: "paypal" })}
+                  rounded={10}
+                  bg="primary"
+                  color="#000"
+                  fontFamily="Bold"
+                  px={"2xl"}
+                  alignSelf="center"
+                  my={"lg"}
+                  mr={5}
+                >
+                  <Text color="#000">Paypal</Text>
+                </Button>
+                <Button
+                  onPress={() => navigate(stackRoutesNames.PAY_SERVICE, { data, price, through: "stripe" })}
+                  rounded={10}
+                  bg="primary"
+                  color="#000"
+                  fontFamily="Bold"
+                  px={"2xl"}
+                  alignSelf="center"
+                  my={"lg"}
+                  ml={5}
+                >
+                  <Text color="#000">Mastercard / Visa</Text>
+                </Button>
+              </Box>
+            )
+        }
+
       </ScrollDiv>
 
-      <Box w={"90%"} alignSelf="center" my="lg">
-        {isSelfProfile ? (
-          // Si es el tarotista viendo su propio perfil, muestra el input para editar el precio
-          <Box>
-            <Text fontFamily="Regular" fontSize={"xl"} color="gray-dark" mt="lg" mb={'lg'}>
-              Editar precio del servicio:
-            </Text>
-            <Input
-              value={newPrice.toString()}
-              onChangeText={setNewPrice}
-              keyboardType="numeric"
-              placeholder="Introduce el nuevo precio"
-            />
-          </Box>
-        ) : (
-          // Si es otro usuario, muestra el selector de minutos y el precio calculado
-          <>
-            <CustomSelect
-              title="Selecciona los minutos"
-              placeholder="Selecciona"
-              options={[1, 2, 3, 4, 5, 10, 20, 30, 40, 50, 60]}
-              setForm={(name, value) => handleSelect(value)}
-              form={{ lorem: minutes }}
-              selected={minutes}
-              name="minutes"
-            />
-            <Text fontFamily="Regular" fontSize={"xl"} color="gray-dark" mt="lg">
-              Precio total: ${price}
-            </Text>
-          </>
-        )}
-      </Box>
-
-      {/* Botón para contratar o guardar cambios */}
-      <Button
-        onPress={() => navigate(stackRoutesNames.PAY_SERVICE, { data, price, through: "paypal" })}
-        rounded={10}
-        bg="primary"
-        color="#000"
-        fontFamily="Bold"
-        px={"2xl"}
-        alignSelf="center"
-        my={"lg"}
-      >
-        <Text color="#000">¡Contratar Paypal!</Text>
-      </Button>
-      <Button
-        onPress={() => navigate(stackRoutesNames.PAY_SERVICE, { data, price, through: "stripe" })}
-        rounded={10}
-        bg="primary"
-        color="#000"
-        fontFamily="Bold"
-        px={"2xl"}
-        alignSelf="center"
-        my={"lg"}
-      >
-        <Text color="#000">¡Contratar 3rd party!</Text>
-      </Button>
     </>
   );
 };

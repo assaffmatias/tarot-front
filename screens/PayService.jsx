@@ -62,6 +62,8 @@ const PayService = () => {
         seller: data.user._id,
         price: `${price}.00`,
         service: data._id,
+        client_name: user.userName,
+        seller_name: data.user.userName
       });
     } else if (urlObj.pathname === "/success") {
       const token = urlObj.searchParams.get("token");
