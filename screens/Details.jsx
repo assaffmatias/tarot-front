@@ -133,7 +133,7 @@ const Details = ({}) => {
 
       {/* Botón para contratar o guardar cambios */}
       <Button
-        onPress={isSelfProfile ? handleSavePrice : () => navigate(stackRoutesNames.PAY_SERVICE, { data, price })}
+        onPress={() => navigate(stackRoutesNames.PAY_SERVICE, { data, price, through: "paypal" })}
         rounded={10}
         bg="primary"
         color="#000"
@@ -142,7 +142,19 @@ const Details = ({}) => {
         alignSelf="center"
         my={"lg"}
       >
-        <Text color="#000">{isSelfProfile ? "Guardar cambios" : "¡Contratar!"}</Text>
+        <Text color="#000">¡Contratar Paypal!</Text>
+      </Button>
+      <Button
+        onPress={() => navigate(stackRoutesNames.PAY_SERVICE, { data, price, through: "stripe" })}
+        rounded={10}
+        bg="primary"
+        color="#000"
+        fontFamily="Bold"
+        px={"2xl"}
+        alignSelf="center"
+        my={"lg"}
+      >
+        <Text color="#000">¡Contratar 3rd party!</Text>
       </Button>
     </>
   );
