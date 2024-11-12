@@ -76,20 +76,20 @@ const Oraculos2 = () => {
         ARCANO
       </Text>
       <ScrollDiv w={"100%"} h={"100%"}>
-        <Box flexDirection="row" flexWrap="wrap" justifyContent="space-between" padding="lg">
+        <Box flexDirection="row" flexWrap="wrap" justifyContent="space-between" ml={10} mr={10}>
           {images.map((img, index) => (
-            <Box key={index} alignItems="center" marginBottom="lg">
+            <Box key={index}>
               <Pressable onPress={() => handlePress(months[index])}>
                 <Animated.Image
                   source={img}
                   style={{
                     width: width * 0.3,
-                    height: height * 0.24,
+                    height: height * 0.2,
                   }}
                   resizeMode="contain"
                 />
               </Pressable>
-              <Animated.Text
+              {/* <Animated.Text
                 style={{
                   color: "white",
                   fontSize: 20,
@@ -98,7 +98,7 @@ const Oraculos2 = () => {
                 }}
               >
                 {months[index]}
-              </Animated.Text>
+              </Animated.Text> */}
             </Box>
           ))}
         </Box>

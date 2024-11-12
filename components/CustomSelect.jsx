@@ -64,9 +64,6 @@ const CustomSelect = ({
         ref={selectRef}
         value={form.lorem}
         title={title}
-        mt="md"
-        pb="2xl"
-        message="Seleccione"
         roundedTop="xl"
         data={input ? [0] : options}
         renderItem={(item) =>

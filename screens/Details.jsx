@@ -36,7 +36,7 @@ const Details = ({ }) => {
     url: `/reviews/${data._id}`,
   });
 
-  const [minutes, setMinutes] = useState(1);
+  const [minutes, setMinutes] = useState(15);
   const [price, setPrice] = useState(data.price);
   const [newPrice, setNewPrice] = useState(data.price);
   const isSelfProfile = user?._id === data.user._id;
@@ -62,7 +62,8 @@ const Details = ({ }) => {
       <ScrollDiv showsVerticalScrollIndicator={false} h={"100%"} w={"100%"}>
         <Image
           rounded={25}
-          source={{ uri: apiUrl + `/uploads/service/${data._id}` }}
+          // source={{ uri: apiUrl + `/uploads/service/${data._id}` }}
+          source={{ uri: 'https://png.pngtree.com/thumb_back/fh260/background/20230610/pngtree-wizard-holds-the-fire-as-he-walks-through-the-forest-image_2924861.jpg' }}
           w={"95%"}
           alignSelf="center"
           h={300}
@@ -118,7 +119,7 @@ const Details = ({ }) => {
               <CustomSelect
                 title="Selecciona los minutos"
                 placeholder="Selecciona"
-                options={[1, 2, 3, 4, 5, 10, 20, 30, 40, 50, 60]}
+                options={[15, 30, 45]}
                 setForm={(name, value) => handleSelect(value)}
                 form={{ lorem: minutes }}
                 selected={minutes}

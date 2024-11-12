@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Animated, Image, Text } from "react-native";
+import { Animated, Image, Text, Alert } from "react-native";
 import { Box, ScrollDiv, Button } from "react-native-magnus";
 import { Dimensions } from "react-native";
 import { useNavigation } from "@react-navigation/native";

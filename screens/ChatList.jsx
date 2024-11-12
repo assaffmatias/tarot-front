@@ -55,7 +55,7 @@ const ChatList = () => {
                             key={index}
                             style={styles.userContainer}>
                             <Image
-                                source={{ uri: chat.seller?.image || 'https://static.vecteezy.com/system/resources/previews/005/129/844/non_2x/profile-user-icon-isolated-on-white-background-eps10-free-vector.jpg' }}
+                                source={{ uri: chat.seller?.image || 'https://png.pngtree.com/thumb_back/fh260/background/20230610/pngtree-wizard-holds-the-fire-as-he-walks-through-the-forest-image_2924861.jpg' }}
                                 style={styles.userImage}
                             />
                             <View style={styles.textContainer}>
@@ -84,7 +84,7 @@ const ChatList = () => {
                             key={index}
                             style={styles.userContainer}>
                             <Image
-                                source={{ uri: chat.client?.image || 'https://static.vecteezy.com/system/resources/previews/005/129/844/non_2x/profile-user-icon-isolated-on-white-background-eps10-free-vector.jpg' }}
+                                source={{ uri: chat.client?.image || 'https://png.pngtree.com/thumb_back/fh260/background/20230610/pngtree-wizard-holds-the-fire-as-he-walks-through-the-forest-image_2924861.jpg' }}
                                 style={styles.userImage}
                             />
                             <View style={styles.textContainer}>

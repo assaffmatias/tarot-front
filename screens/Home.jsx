@@ -108,7 +108,7 @@ if (!user) {
         justifyContent="center"
       >
         {/* Verificación del rol antes de mostrar "Últimas contrataciones" */}
-        {!loading && last_adquires[0] && user.role !== "USER_TAROT" && (
+        {!loading && last_adquires[0] && user?.role !== "USER_TAROT" && (
           <Box>
             <Text fontSize={"md"} fontFamily="Medium" color="gray">
               Últimas contrataciones
@@ -128,7 +128,7 @@ if (!user) {
                     key={data._id}
                     // source={{ uri: apiUrl + `/uploads/service/${data._id}` }}
                     // source={'https://media.lmneuquen.com/p/483fc38db569a6f012e7492d6e6e64d0/adjuntos/195/imagenes/007/420/0007420976/770x0/smart/jimena-la-torrejpg.jpeg'}
-                    source={{ uri: 'https://media.lmneuquen.com/p/483fc38db569a6f012e7492d6e6e64d0/adjuntos/195/imagenes/007/420/0007420976/770x0/smart/jimena-la-torrejpg.jpeg' }}
+                    source={{ uri: 'https://png.pngtree.com/thumb_back/fh260/background/20230610/pngtree-wizard-holds-the-fire-as-he-walks-through-the-forest-image_2924861.jpg' }}
                     w={45}
                     h={45}
                     loadingIndicatorSource={<Skeleton.Circle h={45} w={45} />}

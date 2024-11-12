@@ -184,8 +184,9 @@ const Chat = () => {
             rounded={50}
             h={45}
             w={45}
-            resizeMode="contain"
-            source={{ uri: "https://via.placeholder.com/150/150" }}
+            // resizeMode="contain"
+            // source={{ uri: "https://via.placeholder.com/150/150" }}
+            source={{ uri: 'https://png.pngtree.com/thumb_back/fh260/background/20230610/pngtree-wizard-holds-the-fire-as-he-walks-through-the-forest-image_2924861.jpg' }}
           />
         )}
         placeholder="Mensaje"
