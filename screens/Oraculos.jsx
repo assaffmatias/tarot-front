@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { Alert, Animated, Pressable, Image, Text } from "react-native";
+import React, { useState } from "react";
+import { Animated, Image, Text } from "react-native";
 import { Box, ScrollDiv, Button } from "react-native-magnus";
 import { Dimensions } from "react-native";
-import { stackRoutesNames } from "../routers/stackRoutesNames";
 import { useNavigation } from "@react-navigation/native";
+import { stackRoutesNames } from "../routers/stackRoutesNames";
 
 const { width, height } = Dimensions.get("window");
 
 const Oraculos = () => {
-  const magician = require("../resources/magician.png")
-  const navigation = useNavigation()
+  const magician = require("../resources/magician.png");
+  const navigation = useNavigation();
 
   const images = [
     { source: require("../resources/cards/1.loco.jpg"), name: "Loco" },
@@ -34,39 +34,30 @@ const Oraculos = () => {
     { source: require("../resources/cards/20.sol.jpg"), name: "El Sol" },
     { source: require("../resources/cards/21.juicio.jpg"), name: "Juicio" },
     { source: require("../resources/cards/22.mundo.jpg"), name: "El Mundo" },
-];
+  ];
 
+  const [selectedCardCount, setSelectedCardCount] = useState(0);
 
-  const [selectedCards, setSelectedCards] = useState([]);
-
-  const toggleCardSelection = (card) => {
-    // Si la carta ya está seleccionada, se elimina de la lista
-    if (selectedCards.some(selected => selected.name === card.name)) {
-      setSelectedCards(selectedCards.filter(selected => selected.name !== card.name));
-    } else {
-      // Si no está seleccionada y no supera el límite, se agrega
-      if (selectedCards.length <= 4) {
-        setSelectedCards([...selectedCards, card]);
-      } else {
-        Alert.alert("Límite alcanzado", "Solo puedes seleccionar hasta 5 cartas.");
-      }
-    }
+  const handleCardSelection = (count) => {
+    setSelectedCardCount(count);
   };
 
-  const isSelected = (card) => selectedCards.some(selected => selected.name === card.name);
-
   const handleNextPress = () => {
-    // Verificar si la cantidad de cartas seleccionadas es 1, 3 o 5
-    if (selectedCards.length === 1 || selectedCards.length === 3 || selectedCards.length === 5) {
-      // Pasar la cantidad de cartas y los nombres de las cartas seleccionadas al siguiente componente
-      const selectedCardNames = selectedCards.map(card => card.name); // Extraer solo los nombres de las cartas seleccionadas
-      navigation.navigate(stackRoutesNames.CHAT_IA, {
-        selectedCardCount: selectedCards.length,
-        selectedCardNames: selectedCardNames
-      });
-    } else {
-      Alert.alert("Selección inválida", "Debes seleccionar 1, 3 o 5 cartas.");
+    if (selectedCardCount === 0) {
+      Alert.alert("Selecciona una cantidad", "Por favor selecciona 1, 3 o 5 cartas.");
+      return;
     }
+
+    const shuffledCards = images
+      .map((card) => ({ ...card, sort: Math.random() }))
+      .sort((a, b) => a.sort - b.sort)
+      .slice(0, selectedCardCount)
+      .map((card) => card.name);
+
+    navigation.navigate(stackRoutesNames.CHAT_IA, {
+      selectedCardCount,
+      selectedCardNames: shuffledCards,
+    });
   };
 
   return (
@@ -74,32 +65,72 @@ const Oraculos = () => {
       <Animated.Image
         zIndex={-1}
         source={require("../resources/stars.webp")}
-        style={{ width: "100%", height: "100%", position: "absolute", backgroundColor: "#191970" }}
+        style={{
+          width: "100%",
+          height: "100%",
+          position: "absolute",
+          backgroundColor: "#191970",
+        }}
       />
       <ScrollDiv w={"100%"} h={"100%"}>
         <Box justifyContent="center" alignItems="center" alignSelf="center" mt={50}>
-          <Image source={magician} style={{ width: width * 0.8, height: width * 0.8, resizeMode: "contain" }} />
-          <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 30 }}>Elige la cantidad de</Text>
-          <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 30 }}>Cartas para tu tirada</Text>
-          <Box flexDirection="row" flexWrap="wrap" justifyContent="space-between" padding="lg" pl={10} pr={10} mt={40} mb={40}>
-            {images.map((img, index) => (
-             <Box key={index} alignItems="center" marginBottom="lg">
-                <Pressable onPress={() => toggleCardSelection(img)}>
-                  <Image 
-                  source={img.source} 
-                  style={{
-                    width: width * 0.3, 
-                    height: height * 0.3, 
-                    marginBottom: 20,
-                    opacity: isSelected(img) ? 1 : 0.5,
-                    borderWidth: isSelected(img) ? 1 : 0,
-                    borderColor: "white",
-                    borderRadius: 10
-                    
-                    }}/>
-                </Pressable>
-              </Box>
-            ))}
+          <Image
+            source={magician}
+            style={{
+              width: width * 0.8,
+              height: width * 0.8,
+              resizeMode: "contain",
+            }}
+          />
+          <Text style={{ color: "white", fontWeight: "bold", fontSize: 30 }}>
+            Elige la cantidad de
+          </Text>
+          <Text style={{ color: "white", fontWeight: "bold", fontSize: 30 }}>
+            Cartas para tu tirada
+          </Text>
+          <Box flexDirection="row" justifyContent="space-around" mt={40} mb={40} w="80%">
+            <Button
+              shadow="xl"
+              fontSize={"xl"}
+              shadowColor={selectedCardCount === 1 ? "secondary" : "primary"}
+              bg={selectedCardCount === 1 ? "secondary" : "primary"}
+              color="#000"
+              fontWeight="bold"
+              h={50}
+              w={100}
+              rounded={10}
+              onPress={() => handleCardSelection(1)}
+            >
+              1 Carta
+            </Button>
+            <Button
+              shadow="xl"
+              fontSize={"xl"}
+              shadowColor={selectedCardCount === 3 ? "secondary" : "primary"}
+              bg={selectedCardCount === 3 ? "secondary" : "primary"}
+              color="#000"
+              fontWeight="bold"
+              h={50}
+              w={100}
+              rounded={10}
+              onPress={() => handleCardSelection(3)}
+            >
+              3 Cartas
+            </Button>
+            <Button
+              shadow="xl"
+              fontSize={"xl"}
+              shadowColor={selectedCardCount === 5 ? "secondary" : "primary"}
+              bg={selectedCardCount === 5 ? "secondary" : "primary"}
+              color="#000"
+              fontWeight="bold"
+              h={50}
+              w={100}
+              rounded={10}
+              onPress={() => handleCardSelection(5)}
+            >
+              5 Cartas
+            </Button>
           </Box>
           <Button
             shadow="xl"
@@ -109,9 +140,8 @@ const Oraculos = () => {
             color="#000"
             fontWeight="bold"
             h={63}
-            // w={"80%"}
-            pl={'20%'}
-            pr={'20%'}
+            pl={"20%"}
+            pr={"20%"}
             alignSelf="center"
             rounded={35}
             mb={40}

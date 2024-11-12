@@ -21,6 +21,11 @@ const ChatIA = () => {
     validations: {},
   });
 
+  // console.log('CANTIDAD:', selectedCardCount);
+  // console.log('NAMES:', selectedCardNames);
+  
+  
+
   const onSend = useCallback(
     async (newMessages = []) => {
       const message = newMessages[newMessages.length - 1];
@@ -36,7 +41,7 @@ const ChatIA = () => {
 
       // Llamar a la función que se comunica con el backend (oráculo)
       setLoading(true);
-      const { response } = await handleOraculo({ form: message, clear, setLoading, lastMessages });
+      const { response } = await handleOraculo({ form: message, clear, setLoading, lastMessages, selectedCardNames });
 
       // Agregar la respuesta de la IA al chat
       const responseMessage = {
