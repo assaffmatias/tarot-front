@@ -23,9 +23,9 @@ const CardComponent = ({ data }) => {
           h={429}
           maxW={397}
           w={"100%"}
-          source={{ uri: apiUrl + `/uploads/service/${data._id}` }}
+          // source={{ uri: apiUrl + `/uploads/service/${data._id}` }}
+          source={{ uri: 'https://png.pngtree.com/thumb_back/fh260/background/20230610/pngtree-wizard-holds-the-fire-as-he-walks-through-the-forest-image_2924861.jpg' }}
         />
-        {console.log(data._id)}
 
         <Box style={style.blurView} intensity={11}>
           <Text color="#fff" fontSize={"3xl"} fontFamily="Bold">

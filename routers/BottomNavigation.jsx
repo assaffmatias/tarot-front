@@ -1,5 +1,5 @@
 import React from "react";
-import { Home, Oraculos, Oraculos2, Profile } from "../screens";
+import { Home, Oraculos, Oraculos2, Profile, ChatList } from "../screens";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Header, Icon, Text } from "react-native-magnus";
 import { HeaderDetails } from "../components";

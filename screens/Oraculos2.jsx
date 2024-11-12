@@ -1,112 +1,105 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Alert, Animated, Pressable } from "react-native";
 import { Box, ScrollDiv, Text } from "react-native-magnus";
 import { Dimensions } from "react-native";
+import { api } from "../axios"
 
 const { width, height } = Dimensions.get("window");
 
 const Oraculos2 = () => {
-  // Crear un array para las animaciones de vibración (movimiento horizontal)
-
   const [inProcess, setInProcess] = useState(false);
+  const [cards, setCards] = useState([]);
 
-  const animations = [
-    require("../resources/11_card.png"),
-    require("../resources/12_card.png"),
-    require("../resources/13_card.png"),
-    require("../resources/21_card.png"),
-    require("../resources/22_card.png"),
-    require("../resources/23_card.png"),
-    require("../resources/31_card.png"),
-    require("../resources/32_card.png"),
-    require("../resources/33_card.png"),
-    require("../resources/41_card.png"),
-    require("../resources/42_card.png"),
-    require("../resources/43_card.png"),
-  ].map(() => useState(new Animated.Value(0))[0]); // Inicializar la animación de vibración en 0 (posición inicial)
+  // Array de las imágenes
+  const images = [
+    require("../resources/1.png"),
+    require("../resources/2.png"),
+    require("../resources/3.png"),
+    require("../resources/4-2.png"),
+    require("../resources/5.png"),
+    require("../resources/6.png"),
+    require("../resources/7.png"),
+    require("../resources/8.png"),
+    require("../resources/9.png"),
+    require("../resources/10.png"),
+    require("../resources/11.png"),
+    require("../resources/12.png"),
+  ];
 
-  const handlePress = (index) => {
-    if (inProcess) return;
-    setInProcess(true);
-    const vibrationAnimation = Animated.loop(
-      Animated.sequence([
-        Animated.timing(animations[index], {
-          toValue: 5, // Mueve 5px hacia la derecha
-          duration: 100, // Duración del movimiento
-          useNativeDriver: true,
-        }),
-        Animated.timing(animations[index], {
-          toValue: -5, // Mueve 5px hacia la izquierda
-          duration: 100,
-          useNativeDriver: true,
-        }),
-      ]),
-      {
-        iterations: -1, // Se repite indefinidamente hasta que se cancele
-      }
-    );
-    // Iniciar la animación de vibración
-    vibrationAnimation.start();
+  // Nombres de los meses desde marzo
+  const months = [
+    "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto",
+    "Septiembre", "Octubre", "Noviembre", "Diciembre", "Enero", "Febrero"
+  ];
 
-    // Detener la vibración después de 3 segundos
-    setTimeout(() => {
-      vibrationAnimation.stop();
-      Animated.timing(animations[index], {
-        toValue: 0, // Volver a la posición original
-        duration: 100,
-        useNativeDriver: true,
-      }).start();
-      setInProcess(false);
-      Alert.alert("Aqui se abre el modal con el horoscopo");
-    }, 1000);
+  useEffect(() => {
+    // Obtén las cartas de la API
+    const fetchCards = async () => {
+      const data = await api.GET("/card"); // Ajusta la ruta si es necesario
+      setCards(data); // Suponiendo que la respuesta es un array de cartas
+    };
+
+    fetchCards();
+  }, [])
+
+  console.log(cards);
+
+
+  // const handlePress = (index) => {
+  //   Alert.alert("Aqui se abre el modal con el horoscopo");
+  // };
+
+  // Manejador de presionado, muestra el texto asociado con la carta
+  const handlePress = (month) => {
+    const id = month.charAt(0).toLowerCase() + month.slice(1); // Convertir la primera letra a minúscula
+    const card = cards.find(c => c.id === id); // Busca la carta por su id
+    if (card) {
+      Alert.alert("Horóscopo", card.text); // Muestra el texto en el alert
+    } else {
+      Alert.alert("Sin datos", "No se encontró una carta para este mes.");
+    }
+
+    // const card = cards.find(c => c.id === id); // Busca la carta por su id
+    // if (card) {
+    //   Alert.alert("Horóscopo", card.text); // Muestra el texto en el alert
+    // }
   };
 
   return (
     <>
       <Animated.Image
         zIndex={-1}
-        // source={require("../resources/bg_horoscopo.png")}
-        style={{ width: "100%", height: "100%", position: "absolute", backgroundColor: '#191970' }}
+        source={require("../resources/stars.webp")}
+        style={{ width: "100%", height: "100%", position: "absolute", backgroundColor: "#191970" }}
       />
-      <Text fontFamily="Bold" fontSize={"4xl"} textAlign="center" color="#fff">
+      <Text fontFamily="Bold" fontSize={"4xl"} textAlign="center" color="#fff" pt={30}>
         ARCANO
       </Text>
       <ScrollDiv w={"100%"} h={"100%"}>
-        <Box
-          flexDirection="row"
-          flexWrap="wrap"
-          justifyContent="space-between"
-          padding="lg"
-        >
-          {[
-            require("../resources/11_card.png"),
-            require("../resources/12_card.png"),
-            require("../resources/13_card.png"),
-            require("../resources/21_card.png"),
-            require("../resources/22_card.png"),
-            require("../resources/23_card.png"),
-            require("../resources/31_card.png"),
-            require("../resources/32_card.png"),
-            require("../resources/33_card.png"),
-            require("../resources/41_card.png"),
-            require("../resources/42_card.png"),
-            require("../resources/43_card.png"),
-          ].map((img, index) => (
-            <Pressable
-              key={index}
-              onPress={() => handlePress(index)} // Ejecutar la vibración al presionar
-            >
-              <Animated.Image
-                source={img}
+        <Box flexDirection="row" flexWrap="wrap" justifyContent="space-between" ml={10} mr={10}>
+          {images.map((img, index) => (
+            <Box key={index}>
+              <Pressable onPress={() => handlePress(months[index])}>
+                <Animated.Image
+                  source={img}
+                  style={{
+                    width: width * 0.3,
+                    height: height * 0.2,
+                  }}
+                  resizeMode="contain"
+                />
+              </Pressable>
+              {/* <Animated.Text
                 style={{
-                  width: width * 0.3,
-                  height: height * 0.24,
-                  // marginHorizontal: 8,
-                  transform: [{ translateX: animations[index] }], // Aplicar la animación de movimiento horizontal
+                  color: "white",
+                  fontSize: 20,
+                  textAlign: "center",
+                  fontWeight: "bold",
                 }}
-                resizeMode="contain"
-              />
-            </Pressable>
+              >
+                {months[index]}
+              </Animated.Text> */}
+            </Box>
           ))}
         </Box>
       </ScrollDiv>

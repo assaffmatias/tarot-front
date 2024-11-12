@@ -1,40 +1,101 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Image, ScrollView, Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { stackRoutesNames } from "../routers/stackRoutesNames";
+import { useAuthStore } from "../stores";
+import { api } from "../axios";
+import { Header, Icon, Box } from "react-native-magnus";
 
 const ChatList = () => {
-    const navigation = useNavigation()
+    const navigation = useNavigation();
+    const [chatList, setChatList] = useState([]);
+    const user = useAuthStore((state) => state.userInfo);
 
-    const users = [
-        { name: 'Matias', msg: 'Este es el mensaje', image: 'https://images.unsplash.com/photo-1640951613773-54706e06851d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
-        { name: 'Lucia', msg: 'Hola, ¿cómo estás?', image: '' },
-    ];
+    useEffect(() => {
+        const getChats = async () => {
+            try {
+                const response = user.role === 'USER_REGULAR' ?
+                    await api.GET(`/transaction/client/${user._id}`)
+                    : await api.GET(`/transaction/seller/${user._id}`)
+                const sortedChats = response.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                setChatList(sortedChats);
+            } catch (error) {
+                console.error("Error al obtener los datos:", error);
+            }
+        };
+        getChats();
+    }, []);
 
     // Función para truncar el mensaje
     const truncateMessage = (msg) => {
-        return msg.length > 40 ? `${msg.substring(0, 40)}...` : msg;
+        return msg.length > 30 ? `${msg.substring(0, 30)}...` : msg;
     };
 
-    return (
-        <View style={styles.container}>
-            <Text style={styles.headerText}>Mensajes</Text>
-            <ScrollView style={styles.scrollView}>
-                {users.map((user, index) => (
-                    <Pressable
-                        onPress={() => navigation.navigate(stackRoutesNames.CHAT_SERVICE, { _id: "66ee08c0ded49463f9bd6ba5" })}
-                        key={index}
-                        style={styles.userContainer}>
-                        <Image source={{ uri: user.image ? user.image : 'https://static.vecteezy.com/system/resources/previews/005/129/844/non_2x/profile-user-icon-isolated-on-white-background-eps10-free-vector.jpg' }} style={styles.userImage} />
-                        <View style={styles.textContainer}>
-                            <Text style={styles.userName}>{user.name}</Text>
-                            <Text style={styles.userMsg}>{truncateMessage(user.msg)}</Text>
+    return user.role === 'USER_REGULAR' ?
+        (
+            <View style={styles.container}>
+                <Header style={styles.header}>
+                    <Box style={{ flexDirection: "row", alignItems: "center" }}>
+                        <Pressable onPress={() => navigation.goBack()}>
+                            <Icon name="chevron-back" fontFamily="Ionicons" fontSize={28} color="#000" />
+                        </Pressable>
+                        <Text style={styles.headerText}>Mensajes</Text>
+                    </Box>
+
+                </Header>
+                <ScrollView style={styles.scrollView}>
+                    {chatList.length === 0 && (
+                        <View style={styles.noMSG}>
+                            <Text style={styles.noMSGText}>No tienes mensajes</Text>
                         </View>
-                    </Pressable>
-                ))}
-            </ScrollView>
-        </View>
-    );
+                    )}
+                    {chatList.map((chat, index) => (
+                        <Pressable
+                            onPress={() => navigation.navigate(stackRoutesNames.CHAT_SERVICE, { _id: chat._id, sellerName: chat.seller?.userName, sellerId: chat.seller?._id })}
+                            key={index}
+                            style={styles.userContainer}>
+                            <Image
+                                source={{ uri: chat.seller?.image || 'https://png.pngtree.com/thumb_back/fh260/background/20230610/pngtree-wizard-holds-the-fire-as-he-walks-through-the-forest-image_2924861.jpg' }}
+                                style={styles.userImage}
+                            />
+                            <View style={styles.textContainer}>
+                                <Text style={styles.userName}>{chat.seller?.userName}</Text>
+                                <Text style={styles.userMsg}>{truncateMessage(chat.service.description)}</Text>
+                            </View>
+                        </Pressable>
+                    ))}
+                </ScrollView>
+            </View>
+        )
+        : (
+            <View style={styles.container}>
+                <Header style={styles.header}>
+                    <Text style={styles.headerText}>Mensajes</Text>
+                </Header>
+                <ScrollView style={styles.scrollView}>
+                    {chatList.length === 0 && (
+                        <View style={styles.noMSG}>
+                            <Text style={styles.noMSGText}>No tienes mensajes</Text>
+                        </View>
+                    )}
+                    {chatList.map((chat, index) => (
+                        <Pressable
+                            onPress={() => navigation.navigate(stackRoutesNames.CHAT_SERVICE, { _id: chat._id, userName: chat.client?.userName, clientId: chat.client?._id })}
+                            key={index}
+                            style={styles.userContainer}>
+                            <Image
+                                source={{ uri: chat.client?.image || 'https://png.pngtree.com/thumb_back/fh260/background/20230610/pngtree-wizard-holds-the-fire-as-he-walks-through-the-forest-image_2924861.jpg' }}
+                                style={styles.userImage}
+                            />
+                            <View style={styles.textContainer}>
+                                <Text style={styles.userName}>{chat.client?.userName}</Text>
+                                {/* <Text style={styles.userMsg}>{truncateMessage(chat.service.description)}</Text> */}
+                            </View>
+                        </Pressable>
+                    ))}
+                </ScrollView>
+            </View>
+        )
 };
 
 export default ChatList;
@@ -42,14 +103,21 @@ export default ChatList;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: '5%',
+        // paddingTop: '5%',
         alignItems: 'center',
         backgroundColor: '#fff',
     },
+    header: {
+        width: "100%",
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: 10
+    },
     headerText: {
-        fontSize: 30,
+        fontSize: 25,
         fontWeight: '600',
-        marginBottom: 20,
+        textAlign: 'center',
+        marginLeft: 20,
     },
     scrollView: {
         width: '100%',
@@ -79,4 +147,15 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#555',
     },
+    noMSG: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        // backgroundColor: 'blue',
+        height: 500
+    },
+    noMSGText: {
+        fontSize: 20
+    }
+
 });

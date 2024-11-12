@@ -13,6 +13,7 @@ import { navigate } from "../helpers";
 import * as ImagePicker from "expo-image-picker";
 import * as Linking from "expo-linking";
 import { api } from "../axios";
+import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 
 const { height, width } = Dimensions.get("window");
 
@@ -81,7 +82,7 @@ const Profile = () => {
             title: "Soporte",
             iconName: "support-agent",
             fontFamily: "MaterialIcons",
-            action: () => Linking.openURL("mailto:miqueasledesmadev@gmail.com"),
+            action: () => Linking.openURL("mailto:soporte@arcanoapp.com"),
           },
           // {
           //   title: "Información",
@@ -97,8 +98,8 @@ const Profile = () => {
           // },
           {
             title: "Salir",
-            iconName: "sign-out",
-            fontFamily: "Octicons",
+            iconName: "logout",
+            fontFamily: "MaterialCommunityIcons",
             action: logout,
           },
         ],
@@ -122,11 +123,12 @@ const Profile = () => {
         loadingIndicatorSource={() => <Skeleton.Circle h={150} w={150} />}
         mt={"xl"}
         mb={"lg"}
-        source={{
-          uri: user.img
-            ? apiUrl + `${user.img}`
-            : image || apiUrl + `/uploads/user/${user._id}`,
-        }}
+        // source={{
+        //   uri: user.img
+        //     ? apiUrl + `${user.img}`
+        //     : image || apiUrl + `/uploads/user/${user._id}`,
+        // }}
+        source={{ uri: 'https://png.pngtree.com/thumb_back/fh260/background/20230610/pngtree-wizard-holds-the-fire-as-he-walks-through-the-forest-image_2924861.jpg' }}
         w={150}
         h={150}
         rounded={100}
@@ -181,15 +183,15 @@ const Profile = () => {
         keyExtractor={(item, index) => item.title + index}
         renderItem={({ item }) => (
           <Pressable onPress={item.action}>
-            <Box flexDir="row" p="sm">
+            <Box flexDir="row" p="sm" alignItems="center">
               <Icon
                 name={item.iconName}
                 fontFamily={item.fontFamily}
-                fontSize={25}
+                fontSize={35}
                 color="secondary"
                 mr="sm"
               />
-              <Text fontFamily="Bold" fontSize={16}>
+              <Text fontFamily="Bold" fontSize={16} ml={5}>
                 {item.title}
               </Text>
             </Box>

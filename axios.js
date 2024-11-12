@@ -30,6 +30,8 @@ class ApiQuery {
   }
 
   async GET(url, body) {
+    console.log(this.baseURL + url);
+
     try {
       const { data } = await this.axios.get(this.baseURL + url, {
         params: body,
@@ -42,10 +44,12 @@ class ApiQuery {
   }
 
   async PUT(url, body = {}, config) {
+    console.log(this.baseURL + url, body, config);
     try {
       const { data } = await this.axios.put(this.baseURL + url, body, config);
       return data;
     } catch (error) {
+      console.log('Error de PUT:', error);
       Alert.alert("¡Error!", error.response.data.msg ?? error.message);
       return {};
     }
