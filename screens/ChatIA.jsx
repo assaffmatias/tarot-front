@@ -3,7 +3,7 @@ import { Dimensions, KeyboardAvoidingView, StyleSheet, Animated, Image } from "r
 import { Box, Icon, Text, Button } from "react-native-magnus";
 import { GiftedChat, Bubble } from "react-native-gifted-chat";
 import { useRoute } from "@react-navigation/native";
-import { handleOraculo } from "../services"; // Se mantiene el servicio para manejar la API
+import { handleOraculo } from "../services";
 import { useForm } from "../hooks";
 import { customTheme } from "../theme";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -21,21 +21,26 @@ const ChatIA = () => {
     validations: {},
   });
 
-  // Función para manejar el envío de mensajes
   const onSend = useCallback(
     async (newMessages = []) => {
       const message = newMessages[newMessages.length - 1];
-
+      
       // Agregar el mensaje del usuario al chat
       setMessages((previousMessages) => GiftedChat.append(previousMessages, newMessages));
 
+      // Crear el array lastMessages con los objetos { role, content }
+      const lastMessages = [...messages, message].map((msg) => ({
+        role: msg.user._id === 1 ? "user" : "assistant",
+        content: msg.text,
+      }));
+
       // Llamar a la función que se comunica con el backend (oráculo)
       setLoading(true);
-      const { response } = await handleOraculo({ form: message, clear, setLoading });
+      const { response } = await handleOraculo({ form: message, clear, setLoading, lastMessages });
 
       // Agregar la respuesta de la IA al chat
       const responseMessage = {
-        _id: Math.random(), // Genera un ID único para la respuesta
+        _id: Math.random(),
         text: response,
         createdAt: new Date(),
         user: { _id: 2, name: "IA" },
@@ -44,10 +49,9 @@ const ChatIA = () => {
       setMessages((previousMessages) => GiftedChat.append(previousMessages, [responseMessage]));
       setLoading(false);
     },
-    [form, clear]
+    [messages, form, clear]
   );
 
-  // Función para simular la carga de mensajes (si es necesario)
   const fetchMessages = async () => {
     setMessages([
       {
@@ -80,41 +84,32 @@ const ChatIA = () => {
     );
   };
 
-  // Función para formatear la hora sin los segundos
   const formatTime = (date) => {
     const hours = date.getHours();
     const minutes = date.getMinutes();
-    return `${hours}:${minutes < 10 ? "0" + minutes : minutes}`; // Formato HH:mm
+    return `${hours}:${minutes < 10 ? "0" + minutes : minutes}`;
   };
 
-  // Personalización de burbujas de mensajes
   const renderBubble = (props) => {
     return (
       <Bubble
         {...props}
         wrapperStyle={{
           right: {
-            backgroundColor: "#591970", // Color para el emisor (usuario)
+            backgroundColor: "#591970",
           },
           left: {
-            backgroundColor: "#5a338c", // Color para el receptor (IA)
+            backgroundColor: "#5a338c",
           },
         }}
         textStyle={{
           right: {
-            color: "#fff", // Texto blanco para el emisor
+            color: "#fff",
           },
           left: {
-            color: "#fff", // Texto negro para el receptor
+            color: "#fff",
           },
         }}
-
-      // renderTime={(props) => (
-      //   // <Text style={{ color: '#fff', fontSize: 12, marginLeft: 10, marginRight: 10, marginBottom: 5 }}> {/* Color personalizado para la hora */}
-      //   //   {/* {props.currentMessage.createdAt.toLocaleTimeString()} */}
-      //   //   {/* {formatTime(props.currentMessage.createdAt)} */}
-      //   // </Text>
-      // )}
       />
     );
   };
@@ -155,7 +150,7 @@ const ChatIA = () => {
           messages={messages}
           onSend={onSend}
           user={{
-            _id: 1, // Identificador del usuario
+            _id: 1,
           }}
           renderSend={renderSend}
           renderBubble={renderBubble}

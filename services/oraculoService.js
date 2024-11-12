@@ -1,11 +1,13 @@
 import { Alert } from "react-native";
 import { api } from "../axios"; // Axios configurado para hacer las solicitudes
 
-export const handleOraculo = async ({ form, clear, setLoading }) => {
+export const handleOraculo = async ({ form, clear, setLoading, lastMessages }) => {
+  console.log(lastMessages);
+  
   setLoading(true);
 
   try {
-    const response = await api.POST("/oraculo", { message: form.text });
+    const response = await api.POST("/oraculo", { message: form.text, lastMessages: lastMessages });
     
     if (response.msg === "OK") {
       return { response: response.response }; // La respuesta de la IA
