@@ -37,7 +37,7 @@ const Details = ({ }) => {
   });
 
   const [minutes, setMinutes] = useState(15);
-  const [price, setPrice] = useState(data.price);
+  const [price, setPrice] = useState(data.price * minutes);
   const [newPrice, setNewPrice] = useState(data.price);
   const isSelfProfile = user?._id === data.user._id;
 

@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "tarot_arcano_front",
+    "name": "Arcano",
     "slug": "tarot_arcano_front",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -20,11 +20,12 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#191970"
       },
       "permissions": [
-        "android.permission.RECORD_AUDIO"
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
       ],
       "package": "com.miqueasledesmadev.tarot_arcano_front"
     },
@@ -60,8 +61,9 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "4a2ea90f-5675-4d1e-8d43-66c99328d0c9"
+        "projectId": "7e015ef3-f357-479d-b663-161e76a5ed37"
       }
-    }
+    },
+    "owner": "matias.assaff"
   }
 }
