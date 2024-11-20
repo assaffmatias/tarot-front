@@ -37,6 +37,10 @@ const Profile = () => {
   const [status, requestPermission] = ImagePicker.useCameraPermissions();
   const [image, setImage] = useState(null);
 
+  const handleLogout = () => {
+    logout(() => navigate(stackRoutesNames.LOGIN));
+  };
+
   const pickImage = async () => {
     if (status.granted) {
       let result = await ImagePicker.launchCameraAsync({
@@ -84,23 +88,11 @@ const Profile = () => {
             fontFamily: "MaterialIcons",
             action: () => Linking.openURL("mailto:soporte@arcanoapp.com"),
           },
-          // {
-          //   title: "Información",
-          //   iconName: "info",
-          //   fontFamily: "Foundation",
-          //   action: () => {},
-          // },
-          // {
-          //   title: "Promociones",
-          //   iconName: "price-ribbon",
-          //   fontFamily: "Entypo",
-          //   action: () => {},
-          // },
           {
             title: "Salir",
             iconName: "logout",
             fontFamily: "MaterialCommunityIcons",
-            action: logout,
+            action: handleLogout,
           },
         ],
       },

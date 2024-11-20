@@ -16,9 +16,10 @@ const useAuthStore = create((set) => ({
     await api.setToken({ token, user });
     set({ auth: true, token, userInfo: user });
   },
-  logout: async () => {
+  logout: async (navigateToLogin) => {
     await api.deleteToken();
     set({ auth: false, token: null, userInfo: null });
+    navigateToLogin();
   },
   restoreSession: async ({ auth, token, userInfo }) => {
     const promises = [];
