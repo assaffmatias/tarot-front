@@ -175,7 +175,7 @@ const Profile = () => {
         keyExtractor={(item, index) => item.title + index}
         renderItem={({ item }) => (
           <Pressable onPress={item.action}>
-            <Box flexDir="row" p="sm" alignItems="center">
+            <Box flexDir="row" alignItems="center">
               <Icon
                 name={item.iconName}
                 fontFamily={item.fontFamily}

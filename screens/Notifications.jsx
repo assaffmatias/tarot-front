@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
         fontSize: 30,
         fontWeight: '600',
         textAlign: 'center',
-        color: '#191970', // Color personalizado para el encabezado
+        color: '#fe7b9b',
         paddingTop: '3%'
     },
     scrollView: {
@@ -117,14 +117,14 @@ const styles = StyleSheet.create({
         paddingVertical: 15,
         marginVertical: 10,
         borderRadius: 10,
-        backgroundColor: '#f0f0f0', // Fondo suave para cada notificación
+        backgroundColor: '#f0f0f0',
         paddingHorizontal: 10,
         // paddingLeft: 10,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 5,
-        elevation: 3, // Para dar efecto de sombra en Android
+        elevation: 3,
     },
     notificationTextContainer: {
         flex: 1,
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 10,
         borderRadius: 15,
-        backgroundColor: '#ffe6e6', // Fondo suave para el botón de eliminar
+        backgroundColor: '#ffe6e6',
     },
     noMSG: {
         flex: 1,

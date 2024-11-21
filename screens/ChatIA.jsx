@@ -138,7 +138,7 @@ const ChatIA = () => {
 
   const renderSystemMessage = (props) => (
     <Box w={"100%"} alignItems="center" mt={'8%'}>
-      <Box bg="#1f1f1f" w={"70%"} p={10} borderRadius={10} mb={20}>
+      <Box bg="#1f1f1f" w={"70%"} p={10} borderRadius={10} mb={20} opacity={0.8}>
         <Box flexDir="row" alignItems="center" justifyContent="center" mb={5}>
           <Text color="green" mr={5}>●</Text>
           <Text color="white">Maestro Arcano</Text>
@@ -199,7 +199,7 @@ const ChatIA = () => {
       </View>
       <Box w={"100%"} h={"100%"} bg="#191970">
         <Animated.Image
-          source={require("../resources/chatia_bg.webp")}
+          source={require("../resources/bg_chat2.jpg")}
           style={{
             width: "100%",
             height: "100%",
@@ -310,7 +310,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
   },
   headerText: {
     color: '#d9cab8',

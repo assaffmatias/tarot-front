@@ -118,6 +118,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         textAlign: 'center',
         marginLeft: 20,
+        color: '#191970'
     },
     scrollView: {
         width: '100%',
@@ -155,7 +156,8 @@ const styles = StyleSheet.create({
         height: 500
     },
     noMSGText: {
-        fontSize: 20
+        fontSize: 20,
+        color: '#888'
     }
 
 });
