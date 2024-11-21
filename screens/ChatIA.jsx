@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { Dimensions, KeyboardAvoidingView, StyleSheet, Animated, Image, View } from "react-native";
-import { Box, Icon, Text, Button } from "react-native-magnus";
+import { Dimensions, KeyboardAvoidingView, StyleSheet, Animated, Image, View, Modal, ScrollView, Keyboard, Pressable, Alert } from "react-native";
+import { Box, Icon, Text, Button, Header } from "react-native-magnus";
 import { GiftedChat, Bubble } from "react-native-gifted-chat";
 import { useRoute } from "@react-navigation/native";
 import { handleOraculo } from "../services";
@@ -16,11 +16,15 @@ const ChatIA = () => {
   const [loading, setLoading] = useState(false);
   const { selectedCardCount, selectedCardNames } = route.params;
   const [showCards, setShowCards] = useState(false)
+  const [modal, setModal] = useState(false)
+  const [selectedImages, setSelectedImages] = useState([]);
 
   const { setForm, form, clear } = useForm({
     initialValues: { message: "" },
     validations: {},
   });
+
+  const avatar = require('../resources/magician.png')
 
 
   const images = [
@@ -70,7 +74,7 @@ const ChatIA = () => {
         _id: Math.random(),
         text: response,
         createdAt: new Date(),
-        user: { _id: 2, name: "IA" },
+        user: { _id: 2, name: "Arcano", avatar: avatar },
       };
 
       // Filtrar las imágenes según las cartas seleccionadas
@@ -78,19 +82,12 @@ const ChatIA = () => {
         selectedCardNames.includes(image.name)
       );
 
-      console.log('FILTERED:', filteredImages);
+      console.log(messages.length);
 
-      // Mapear los números de `source` en `filteredImages` a las rutas de imágenes reales
-      const imageMessages = filteredImages.map((image, index) => ({
-        _id: Math.random(),
-        image: image.source,  // Ahora `image.source` es una ruta válida
-        createdAt: new Date(),
-        user: { _id: 2, name: "IA" },
-      }));
 
-      // Si se han filtrado imágenes, agregarlas al chat
-      if (imageMessages.length > 0) {
-        setMessages((previousMessages) => GiftedChat.append(previousMessages, imageMessages));
+      if (filteredImages.length > 0 && messages.length === 2) {
+        setSelectedImages(filteredImages);
+        setModal(true); // Abrir el modal
       }
 
       // Agregar la respuesta de IA al chat
@@ -100,64 +97,20 @@ const ChatIA = () => {
     [messages, form, clear]
   );
 
-
-  // const onSend = useCallback(
-  //   async (newMessages = []) => {
-  //     const message = newMessages[newMessages.length - 1];
-
-  //     // Agregar el mensaje del usuario al chat
-  //     setMessages((previousMessages) => GiftedChat.append(previousMessages, newMessages));
-
-  //     // Crear el array lastMessages con los objetos { role, content }
-  //     const lastMessages = [...messages, message].map((msg) => ({
-  //       role: msg.user._id === 1 ? "user" : "assistant",
-  //       content: msg.text,
-  //     }));
-
-  //     // Llamar a la función que se comunica con el backend (oráculo)
-  //     setLoading(true);
-  //     const { response } = await handleOraculo({ form: message, clear, setLoading, lastMessages, selectedCardNames });
-
-  //     // Agregar la respuesta de la IA al chat
-  //     const responseMessage = {
-  //       _id: Math.random(),
-  //       text: response,
-  //       createdAt: new Date(),
-  //       user: { _id: 2, name: "IA" },
-  //     };
-
-  //     const filteredImages = images.filter(image =>
-  //       selectedCardNames.includes(image.name)
-  //     );
-
-  //     console.log('FILTERED:', filteredImages);
-
-  //     // Agregar imágenes solo si messages.length > 1
-  //     if (messages.length > 1) {
-  //       const imageMessages = filteredImages.map((image, index) => ({
-  //         _id: Math.random(),
-  //         image: image.source,
-  //         createdAt: new Date(),
-  //         user: { _id: 2, name: "IA" },
-  //       }));
-
-  //       setMessages((previousMessages) => GiftedChat.append(previousMessages, imageMessages));
-  //     }
-
-  //     setMessages((previousMessages) => GiftedChat.append(previousMessages, [responseMessage]));
-  //     setLoading(false);
-  //   },
-  //   [messages, form, clear]
-  // )
-
-
   const fetchMessages = async () => {
     setMessages([
       {
         _id: 1,
         text: "Bienvenido al espacio de reflexión, por favor formula tu pregunta para poder ayudarte.",
         createdAt: new Date(),
-        user: { _id: 2, name: "IA" },
+        user: { _id: 2, name: "Arcano", avatar: avatar },
+      },
+      {
+        _id: 0,
+        text: "Sabio y Cálido. Maestro Arcano combina conocimiento ancestral y humor en cada lectura.",
+        createdAt: new Date(),
+        user: { _id: 2, name: "Arcano" },
+        system: true, // Estilo de mensaje especial
       },
     ]);
   };
@@ -178,16 +131,22 @@ const ChatIA = () => {
           }
         }}
       >
-        <Icon name="send" fontFamily="Ionicons" fontSize={22} color="#09f" />
+        <Icon name="send" fontFamily="Ionicons" fontSize={22} color="#591970" />
       </Button>
     );
   };
 
-  const formatTime = (date) => {
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    return `${hours}:${minutes < 10 ? "0" + minutes : minutes}`;
-  };
+  const renderSystemMessage = (props) => (
+    <Box w={"100%"} alignItems="center" mt={'8%'}>
+      <Box bg="#1f1f1f" w={"70%"} p={10} borderRadius={10} mb={20}>
+        <Box flexDir="row" alignItems="center" justifyContent="center" mb={5}>
+          <Text color="green" mr={5}>●</Text>
+          <Text color="white">Maestro Arcano</Text>
+        </Box>
+        <Text color="white" textAlign="center">Sabio y Calido. Maestro Arcano combina conocimiento ancestral y humor en cada lectura.</Text>
+      </Box>
+    </Box>
+  );
 
   const renderBubble = (props) => {
     return (
@@ -196,9 +155,14 @@ const ChatIA = () => {
         wrapperStyle={{
           right: {
             backgroundColor: "#591970",
+            borderRadius: 15
           },
           left: {
             backgroundColor: "#5a338c",
+            borderTopLeftRadius: 15,
+            borderTopRightRadius: 15,
+            borderBottomLeftRadius: 5,
+            borderBottomRightRadius: 15,
           },
         }}
         textStyle={{
@@ -213,28 +177,26 @@ const ChatIA = () => {
     );
   };
 
-  const renderMessageImage = (props) => {
-    // console.log('props', props);
-
-    return (
-      <View>
-        <Image
-          source={props.currentMessage.image}
-          style={{
-            width: 100,
-            height: 150,
-            borderRadius: 8,
-            margin: 10,
-            resizeMode: 'contain'
-          }}
-        />
-      </View>
-    );
-  };
-
+  const handleCoin =  () => {
+    Alert.alert('Coins')
+  }
 
   return (
     <SafeAreaView>
+      {/* <KeyboardAvoidingView
+        behavior="padding" // Ajusta el comportamiento al aparecer el teclado
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={90} // Ajusta el desplazamiento en iOS
+      ></KeyboardAvoidingView> */}
+      <View style={styles.header}>
+          <Text style={styles.headerText}>Arcano</Text>
+          <View style={styles.headerSection}>
+            <Text style={styles.coinText}>5</Text>
+            <Pressable onPress={handleCoin}>
+              <Image source={require('../resources/twemoji_coin.png')} />
+            </Pressable>
+          </View>
+      </View>
       <Box w={"100%"} h={"100%"} bg="#191970">
         <Animated.Image
           source={require("../resources/chatia_bg.webp")}
@@ -251,20 +213,9 @@ const ChatIA = () => {
           width="100%"
           height="100%"
           bg="purple500"
-          opacity={0.3}
+          opacity={0.1}
           zIndex={-1}
         />
-
-        <Box w={"100%"} alignItems="center" mt={20} position="absolute" opacity={0.4}>
-          <Box bg="#1f1f1f" w={"70%"} p={10} borderRadius={10}>
-            <Box flexDir="row" alignItems="center" justifyContent="center" mb={5}>
-              <Text color="green" mr={5}>●</Text>
-              <Text color="white">Maestro Arcano</Text>
-            </Box>
-            <Text color="white" textAlign="center">Sabio y Calido. Maestro Arcano combina conocimiento ancestral y humor en cada lectura.</Text>
-          </Box>
-        </Box>
-
 
         <GiftedChat
           messages={messages}
@@ -274,38 +225,141 @@ const ChatIA = () => {
           }}
           renderSend={renderSend}
           renderBubble={renderBubble}
-          renderMessageImage={renderMessageImage}
+          renderSystemMessage={renderSystemMessage}
           alwaysShowSend={true}
           placeholder="Haz tu pregunta"
           containerStyle={{ marginBottom: 0 }}
           textInputStyle={{
             color: "#000",
             backgroundColor: "#e6e6e6",
-            borderRadius: 20,
-            paddingHorizontal: 20,
+            borderRadius: 8,
+            paddingHorizontal: 15,
+          }}
+          textInputProps={{
+            selectionColor: "#591970", // Color del cursor
+          }}
+          listViewProps={{
+            contentContainerStyle: {flexGrow: 1 ,justifyContent: "flex-end" },
           }}
         />
 
-        {/* {loading && (
-          <Box
-            position="absolute"
-            top="50%"
-            left="50%"
-            transform={[{ translateX: -50 }, { translateY: -50 }]}
-          >
-            <Text>Loading...</Text>
-          </Box>
-        )} */}
+        {/* Modal para mostrar las imágenes */}
+        <Modal
+          visible={modal}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setModal(false)}
+        >
+
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Animated.Image
+                zIndex={-1}
+                source={require("../resources/stars.webp")}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  position: "absolute",
+                  backgroundColor: "#191970",
+                }}
+              />
+              <Text style={styles.modalTitle}>Estas son tus cartas</Text>
+              <ScrollView>
+                <View style={styles.cardContainer}>
+                  {selectedImages.map((image, index) => (
+                    <Image
+                      key={index}
+                      source={image.source}
+                      style={styles.cardImage}
+                    />
+                  ))}
+                </View>
+              </ScrollView>
+              <View style={styles.buttonContainer}>
+                <Button
+                  mt="md"
+                  bg="#fed700"
+                  color="#000"
+                  onPress={() => setModal(false)}
+                >
+                  Quiero saber más
+                </Button>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </Box>
     </SafeAreaView>
   );
 };
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   keyboardAvoidingView: {
     position: "absolute",
     bottom: 15,
     width: "100%",
+  },
+  header:{
+    backgroundColor: '#191970',
+    height: '6%',
+    width: '100%',
+    position: 'absolute',
+    top: 0,
+    zIndex: 1,
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 20
+  },
+  headerText: {
+    color: '#d9cab8',
+    fontSize: 22,
+    fontWeight: 'bold'
+  },
+  headerSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    position: 'absolute',
+    right: 20
+  },
+  coinText: {
+    color: '#d9cab8',
+    fontSize: 22,
+    marginRight: 10,
+    fontWeight: 'bold'
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    backgroundColor: "#191970",
+    paddingVertical: 20,
+    width: '100%',
+    height: '100%',
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 28,
+    fontWeight: "bold",
+    marginBottom: 15,
+    color: "#fff",
+  },
+  cardContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    marginVertical: 10,
+  },
+  cardImage: {
+    width: 125,
+    height: 250,
+    borderRadius: 8,
+    marginHorizontal: 10,
+    marginVertical: 10,
+    resizeMode: "cover",
   },
 });
 

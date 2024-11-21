@@ -94,7 +94,8 @@ const Oraculos = () => {
               fontSize={"xl"}
               shadowColor={selectedCardCount === 1 ? "secondary" : "primary"}
               bg={selectedCardCount === 1 ? "secondary" : "primary"}
-              color="#000"
+              // color="#000"
+              color={selectedCardCount === 1 ? 'white' : '#000'}
               fontWeight="bold"
               h={50}
               w={100}
@@ -108,7 +109,8 @@ const Oraculos = () => {
               fontSize={"xl"}
               shadowColor={selectedCardCount === 3 ? "secondary" : "primary"}
               bg={selectedCardCount === 3 ? "secondary" : "primary"}
-              color="#000"
+              // color="#000"
+              color={selectedCardCount === 3 ? 'white' : '#000'}
               fontWeight="bold"
               h={50}
               w={100}
@@ -122,7 +124,8 @@ const Oraculos = () => {
               fontSize={"xl"}
               shadowColor={selectedCardCount === 5 ? "secondary" : "primary"}
               bg={selectedCardCount === 5 ? "secondary" : "primary"}
-              color="#000"
+              // color="#000"
+              color={selectedCardCount === 5 ? 'white' : '#000'}
               fontWeight="bold"
               h={50}
               w={100}

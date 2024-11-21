@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
         width: "100%",
         alignItems: "center",
         justifyContent: "center",
-        marginTop: 40,
+        marginTop: 20,
         marginBottom: 20,
         paddingHorizontal: 20
     },
