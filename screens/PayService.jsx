@@ -16,7 +16,9 @@ const PayService = () => {
   const route = useRoute();
   const navigation = useNavigation()
 
-  const { data = {}, price, through } = route.params || {};
+  const { data = {}, price, hiredMinutes, through } = route.params || {};
+  console.log(hiredMinutes, price);
+  
 
   useEffect(() => {
     // Llama a la API para obtener el approvalUrl solo una vez
@@ -25,6 +27,7 @@ const PayService = () => {
         const response = await api.POST("/transaction", {
           currency: "USD",
           amount: `${price}.00`,
+          hiredMinutes,
           // client: user._id,
           // seller: data.user._id
         });
@@ -35,9 +38,15 @@ const PayService = () => {
     };
     const createPaymentStripe = async () => {
       try {
+        console.log(data);
+        
         const response = await api.POST("/transaction/cc", {
           currency: "USD",
           amount: `${price}.00`,
+          client: user._id,
+          seller: data.user._id,
+          service: data._id,
+          hiredMinutes
         });
         console.log(response.approvalUrl);
         setApprovalUrl(response.approvalUrl);
@@ -57,14 +66,14 @@ const PayService = () => {
     console.log(urlObj.pathname);
     
     if (urlObj.pathname === "/success/cc") {
-      await api.POST("/transaction/success/cc", {
-        client: user._id,
-        seller: data.user._id,
-        price: `${price}.00`,
-        service: data._id,
-        client_name: user.userName,
-        seller_name: data.user.userName
-      });
+      // await api.POST("/transaction/success/cc", {
+      //   client: user._id,
+      //   seller: data.user._id,
+      //   price: `${price}.00`,
+      //   service: data._id,
+      //   client_name: user.userName,
+      //   seller_name: data.user.userName
+      // });
     } else if (urlObj.pathname === "/success") {
       const token = urlObj.searchParams.get("token");
       const payerId = urlObj.searchParams.get("PayerID");
