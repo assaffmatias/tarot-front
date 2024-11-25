@@ -16,8 +16,8 @@ const PayService = () => {
   const route = useRoute();
   const navigation = useNavigation()
 
-  const { data = {}, price, hiredMinutes, through } = route.params || {};
-  console.log(hiredMinutes, price);
+  const { data = {}, price, quantity, type, through } = route.params || {};
+  console.log(quantity, type);
   
 
   useEffect(() => {
@@ -27,9 +27,11 @@ const PayService = () => {
         const response = await api.POST("/transaction", {
           currency: "USD",
           amount: `${price}.00`,
-          hiredMinutes,
-          // client: user._id,
-          // seller: data.user._id
+          client: user._id,
+          seller: data.user._id,
+          service: data._id,
+          quantity,
+          type
         });
         setApprovalUrl(response.approvalUrl);
       } catch (error) {
@@ -46,7 +48,8 @@ const PayService = () => {
           client: user._id,
           seller: data.user._id,
           service: data._id,
-          hiredMinutes
+          quantity,
+          type
         });
         console.log(response.approvalUrl);
         setApprovalUrl(response.approvalUrl);
