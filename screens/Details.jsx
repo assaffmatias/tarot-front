@@ -150,7 +150,7 @@ const Details = ({ }) => {
             (
               <Box flexDir="row" justifyContent="center">
                 <Button
-                  onPress={() => navigate(stackRoutesNames.PAY_SERVICE, { data, price, through: "paypal" })}
+                  onPress={() => navigate(stackRoutesNames.PAY_SERVICE, { data, price, quantity:minutes, type: "hire",through: "paypal"})}
                   rounded={10}
                   bg="primary"
                   color="#000"
@@ -163,7 +163,7 @@ const Details = ({ }) => {
                   <Text color="#000">Paypal</Text>
                 </Button>
                 <Button
-                  onPress={() => navigate(stackRoutesNames.PAY_SERVICE, { data, price, through: "stripe" })}
+                  onPress={() => navigate(stackRoutesNames.PAY_SERVICE, { data, price, quantity:minutes, type: "hire",through: "stripe" })}
                   rounded={10}
                   bg="primary"
                   color="#000"

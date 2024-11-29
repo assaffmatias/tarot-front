@@ -7,6 +7,7 @@ import { handleOraculo } from "../services";
 import { useForm } from "../hooks";
 import { customTheme } from "../theme";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useAuthStore } from "../stores";
 
 const { width, height } = Dimensions.get("window");
 
@@ -18,6 +19,7 @@ const ChatIA = () => {
   const [showCards, setShowCards] = useState(false)
   const [modal, setModal] = useState(false)
   const [selectedImages, setSelectedImages] = useState([]);
+  const user = useAuthStore((state) => state.userInfo);
 
   const { setForm, form, clear } = useForm({
     initialValues: { message: "" },
@@ -67,7 +69,8 @@ const ChatIA = () => {
 
       // Llamar a la función que se comunica con el backend (oráculo)
       setLoading(true);
-      const { response } = await handleOraculo({ form: message, clear, setLoading, lastMessages, selectedCardNames });
+      console.log("El user:",user)
+      const { response } = await handleOraculo({ user,  form: message, clear, setLoading, lastMessages, selectedCardNames });
 
       // Agregar la respuesta de la IA al chat
       const responseMessage = {
