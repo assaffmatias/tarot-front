@@ -37,6 +37,9 @@ const Profile = () => {
   const [status, requestPermission] = ImagePicker.useCameraPermissions();
   const [image, setImage] = useState(null);
 
+  console.log('USER:', user);
+  
+
   const handleLogout = () => {
     logout(() => navigate(stackRoutesNames.LOGIN));
   };

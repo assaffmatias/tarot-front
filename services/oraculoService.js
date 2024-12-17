@@ -8,12 +8,16 @@ export const handleOraculo = async ({ user, form, clear, setLoading, lastMessage
 
   try {
     const response = await api.POST("/oraculo", { user, message: form.text, lastMessages: lastMessages, cartas: selectedCardNames });
+
+    console.log('REPONSE:', response);
+    
     
     if (response.msg === "OK") {
       return { response: response.response }; // La respuesta de la IA
+    } else if (response.msg === 'No tienes suficientes chatCoins') {
+      return { response: "Ops! No tienes monedas suficientes" };
     } else {
-      Alert.alert("Error", "No se pudo obtener la respuesta. Intenta de nuevo.");
-      return { response: "Lo siento, ocurrió un error. Intenta de nuevo." };
+      return { response: "Lo siento, no estoy disponible en este momento." };
     }
   } catch (error) {
     console.error("Error en la API:", error);

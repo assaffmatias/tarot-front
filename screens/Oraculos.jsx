@@ -44,7 +44,7 @@ const Oraculos = () => {
 
   const handleNextPress = () => {
     if (selectedCardCount === 0) {
-      Alert.alert("Selecciona una cantidad", "Por favor selecciona 1, 3 o 5 cartas.");
+      Alert.alert("Selecciona una cantidad de cartas");
       return;
     }
 
@@ -98,7 +98,7 @@ const Oraculos = () => {
               color={selectedCardCount === 1 ? 'white' : '#000'}
               fontWeight="bold"
               h={50}
-              w={100}
+              w={'30%'}
               rounded={10}
               onPress={() => handleCardSelection(1)}
             >
@@ -113,7 +113,7 @@ const Oraculos = () => {
               color={selectedCardCount === 3 ? 'white' : '#000'}
               fontWeight="bold"
               h={50}
-              w={100}
+              w={'30%'}
               rounded={10}
               onPress={() => handleCardSelection(3)}
             >
@@ -128,7 +128,7 @@ const Oraculos = () => {
               color={selectedCardCount === 5 ? 'white' : '#000'}
               fontWeight="bold"
               h={50}
-              w={100}
+              w={'30%'}
               rounded={10}
               onPress={() => handleCardSelection(5)}
             >

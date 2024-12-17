@@ -18,6 +18,7 @@ import { stackRoutesNames } from "./stackRoutesNames";
 import BottomNavigation from "./BottomNavigation";
 import { SocketProvider } from "../contexts";
 import { Details } from "../screens";
+import PayCoins from "../screens/PayCoins";
 
 const StackRoutes = {
   WELCOME: {
@@ -65,6 +66,12 @@ const StackRoutes = {
   PAY_SERVICE: {
     name: stackRoutesNames.PAY_SERVICE,
     Component: PayService,
+    auth: true,
+    header: false,
+  },
+  PAY_COINS: {
+    name: stackRoutesNames.PAY_COINS,
+    Component: PayCoins,
     auth: true,
     header: false,
   },

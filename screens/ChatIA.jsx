@@ -1,25 +1,30 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { Dimensions, KeyboardAvoidingView, StyleSheet, Animated, Image, View, Modal, ScrollView, Keyboard, Pressable, Alert } from "react-native";
-import { Box, Icon, Text, Button, Header } from "react-native-magnus";
+import { StyleSheet, Animated, Image, View, Modal, ScrollView, Pressable, Alert } from "react-native";
+import { Box, Icon, Text, Button } from "react-native-magnus";
 import { GiftedChat, Bubble } from "react-native-gifted-chat";
 import { useRoute } from "@react-navigation/native";
 import { handleOraculo } from "../services";
 import { useForm } from "../hooks";
-import { customTheme } from "../theme";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuthStore } from "../stores";
-
-const { width, height } = Dimensions.get("window");
+import { api } from "../axios";
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import { navigate } from "../helpers";
+import { stackRoutesNames } from "../routers/stackRoutesNames";
 
 const ChatIA = () => {
   const route = useRoute();
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const { selectedCardCount, selectedCardNames } = route.params;
-  const [showCards, setShowCards] = useState(false)
   const [modal, setModal] = useState(false)
+  const [modalCoins, setModalCoins] = useState(false)
   const [selectedImages, setSelectedImages] = useState([]);
   const user = useAuthStore((state) => state.userInfo);
+  const [coins, setCoins] = useState(0)
+  const [payment, setPayment] = useState('')
+  const [selectCoins, setSelectCoins] = useState(0)
+  const [price, setPrice] = useState(0)
 
   const { setForm, form, clear } = useForm({
     initialValues: { message: "" },
@@ -27,7 +32,6 @@ const ChatIA = () => {
   });
 
   const avatar = require('../resources/magician.png')
-
 
   const images = [
     { source: require("../resources/cards/1.loco.jpg"), name: "Loco" },
@@ -54,6 +58,20 @@ const ChatIA = () => {
     { source: require("../resources/cards/22.mundo.jpg"), name: "El Mundo" },
   ];
 
+  const handleCoins = async () => {
+    const response = await api.GET(`/user/${user._id}`)
+    setCoins(response.user.chatCoins)
+  }
+
+  useEffect(() => {
+    fetchMessages();
+  }, []);
+
+  useEffect(() => {
+    handleCoins();
+  }, [messages]);
+
+
   const onSend = useCallback(
     async (newMessages = []) => {
       const message = newMessages[newMessages.length - 1];
@@ -69,8 +87,10 @@ const ChatIA = () => {
 
       // Llamar a la función que se comunica con el backend (oráculo)
       setLoading(true);
-      console.log("El user:",user)
-      const { response } = await handleOraculo({ user,  form: message, clear, setLoading, lastMessages, selectedCardNames });
+      const { response } = await handleOraculo({ user, form: message, clear, setLoading, lastMessages, selectedCardNames });
+      console.log('RESPONSE:', response);
+
+      // if(response === 'Lo siento, no estoy disponible en este momento.' || response === 'Ops! No tienes monedas suficientes') return
 
       // Agregar la respuesta de la IA al chat
       const responseMessage = {
@@ -85,12 +105,13 @@ const ChatIA = () => {
         selectedCardNames.includes(image.name)
       );
 
-      console.log(messages.length);
+      if (response !== 'Lo siento, no estoy disponible en este momento.' && response !== 'Ops! No tienes monedas suficientes') {
+        console.log('ENTRA AL IF');
 
-
-      if (filteredImages.length > 0 && messages.length === 2) {
-        setSelectedImages(filteredImages);
-        setModal(true); // Abrir el modal
+        if (filteredImages.length > 0 && messages.length === 2) {
+          setSelectedImages(filteredImages);
+          setModal(true); // Abrir el modal
+        }
       }
 
       // Agregar la respuesta de IA al chat
@@ -117,10 +138,6 @@ const ChatIA = () => {
       },
     ]);
   };
-
-  useEffect(() => {
-    fetchMessages();
-  }, []);
 
   const renderSend = (props) => {
     return (
@@ -180,9 +197,39 @@ const ChatIA = () => {
     );
   };
 
-  const handleCoin =  () => {
-    Alert.alert('Coins')
+  const handleModalCoins = () => {
+    // Alert.alert('Coins')
+    setModalCoins(!modalCoins)
+    setPayment('')
+    setSelectCoins(0)
   }
+
+  const handlePayment = (props) => {
+    setPayment(props)
+  }
+
+  const handleQuantity = (props) => {
+    setSelectCoins(props)
+    //Precios $2.45 -- $4.45 -- $9.95
+    props === 5 ? setPrice(2) : props === 10 ? setPrice(4) : setPrice(9)
+  }
+
+  const handleContinue = () => {
+    if (payment === '') {
+      Alert.alert('Debes seleccionar un método de pago')
+      return
+    }
+
+    if (selectCoins === 0) {
+      Alert.alert('Debes seleccionar una cantidad de monedas')
+      return
+    }
+    navigate(stackRoutesNames.PAY_COINS, {price, quantity: selectCoins, through: payment, type: 'coins'})
+    setModalCoins(false)
+  }
+  
+  console.log('payment:', payment);
+  
 
   return (
     <SafeAreaView>
@@ -192,13 +239,14 @@ const ChatIA = () => {
         keyboardVerticalOffset={90} // Ajusta el desplazamiento en iOS
       ></KeyboardAvoidingView> */}
       <View style={styles.header}>
-          <Text style={styles.headerText}>Arcano</Text>
-          <View style={styles.headerSection}>
-            <Text style={styles.coinText}>5</Text>
-            <Pressable onPress={handleCoin}>
-              <Image source={require('../resources/twemoji_coin.png')} />
-            </Pressable>
-          </View>
+        <Text style={styles.headerText}>Arcano</Text>
+        <View style={styles.headerSection}>
+          <Text style={styles.coinText}>{coins}</Text>
+          <Pressable onPress={handleModalCoins}>
+            <FontAwesome6 name="coins" size={24} color="#e8b442" />
+            {/* <Image source={require('../resources/twemoji_coin.png')} /> */}
+          </Pressable>
+        </View>
       </View>
       <Box w={"100%"} h={"100%"} bg="#191970">
         <Animated.Image
@@ -242,9 +290,94 @@ const ChatIA = () => {
             selectionColor: "#591970", // Color del cursor
           }}
           listViewProps={{
-            contentContainerStyle: {flexGrow: 1 ,justifyContent: "flex-end" },
+            contentContainerStyle: { flexGrow: 1, justifyContent: "flex-end" },
           }}
         />
+
+
+
+        {/* Modal para las coins */}
+        <Modal
+          visible={modalCoins}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setModal(false)}
+        >
+          <View style={{ backgroundColor: 'white', height: '100%', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+            <View style={{ alignItems: 'center', justifyContent: "center", width: '80%' }}>
+              <FontAwesome6 name="coins" size={100} color="#e8b442" style={{ marginBottom: 20 }} />
+              <Text style={{ fontSize: 20 }}>Selecciona una cantidad</Text>
+              <Pressable onPress={() => handleQuantity(5)}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '80%', marginTop: 20, backgroundColor: selectCoins === 5 ? '#09f' : '#e8b442', padding: 10, borderRadius: 10 }}>
+                <Text style={{color: selectCoins === 5 ? '#fff' : '#000',}}>5 monedas</Text>
+                <Text style={{color: selectCoins === 5 ? '#fff' : '#000',}}>$2.45</Text>
+                </View>
+              </Pressable>
+
+              <Pressable onPress={() => handleQuantity(10)}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '80%', marginTop: 20, backgroundColor: selectCoins === 10 ? '#09f' : '#e8b442', padding: 10, borderRadius: 10 }}>
+                <Text style={{color: selectCoins === 10 ? '#fff' : '#000',}}>10 monedas</Text>
+                <Text style={{color: selectCoins === 10 ? '#fff' : '#000',}}>$4.45</Text>
+                </View>
+              </Pressable>
+
+              <Pressable onPress={() => handleQuantity(25)}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '80%', marginTop: 20,  backgroundColor: selectCoins === 25 ? '#09f' : '#e8b442', padding: 10, borderRadius: 10 }}>
+                  <Text style={{color: selectCoins === 25 ? '#fff' : '#000',}}>25 monedas</Text>
+                  <Text style={{color: selectCoins === 25 ? '#fff' : '#000',}}>$9.95</Text>
+                </View>
+              </Pressable>
+              <Text style={{ fontSize: 20, marginTop: 20 }}>Como quieres pagar?</Text>
+              <View style={{ flexDirection: 'row' }}>
+                <Pressable onPress={() => handlePayment('paypal')}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      marginTop: 20,
+                      backgroundColor: payment === 'paypal' ? '#09f' : '#e8b442',
+                      padding: 10,
+                      borderRadius: 10,
+                      marginLeft: 10,
+                    }}
+                  >
+                    <Text style={{color: payment === 'paypal' ? '#fff' : '#000',}}>Paypal</Text>
+                  </View>
+                </Pressable>
+
+                <Pressable onPress={() => handlePayment('visa')}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      marginTop: 20,
+                      backgroundColor: payment === 'visa' ? '#09f' : '#e8b442',
+                      padding: 10,
+                      borderRadius: 10,
+                      marginLeft: 10,
+                    }}
+                  >
+                    <Text style={{color: payment === 'visa' ? '#fff' : '#000',}}>Mastercard / Visa</Text>
+                  </View>
+                </Pressable>
+              </View>
+
+              <View style={{ flexDirection: 'row', marginTop: 40 }}>
+                <Pressable onPress={handleModalCoins}>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20, backgroundColor: '#e8b442', padding: 10, borderRadius: 10, marginRight: 10 }}>
+                    <Text>Cancelar</Text>
+                  </View>
+                </Pressable>
+                <Pressable onPress={handleContinue}>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20, backgroundColor: '#e8b442', padding: 10, borderRadius: 10, marginLeft: 10 }}>
+                    <Text>Continuar</Text>
+                  </View>
+                </Pressable>
+              </View>
+              {/* <Button style={{width: '50%'}} onPress={handleCoin}>Cerrar</Button> */}
+            </View>
+          </View>
+        </Modal>
 
         {/* Modal para mostrar las imágenes */}
         <Modal
@@ -302,9 +435,9 @@ const styles = StyleSheet.create({
     bottom: 15,
     width: "100%",
   },
-  header:{
+  header: {
     backgroundColor: '#191970',
-    height: '6%',
+    height: '10%',
     width: '100%',
     position: 'absolute',
     top: 0,
