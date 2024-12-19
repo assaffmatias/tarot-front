@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Box, Button, Icon, Image, Skeleton, Text, View } from "react-native-magnus";
+import { Box, Button, Icon, Image, Skeleton, Text, View, SafeAreaView } from "react-native-magnus";
 import { InfinityScroll, Filter } from "../components";
 import { useFetch } from "../hooks";
 import { ActivityIndicator, Pressable } from "react-native";
@@ -31,9 +31,9 @@ const Home = () => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        console.log("estoy por pedir notificaciones con" + user._id);
+        // console.log("estoy por pedir notificaciones con" + user._id);
         const response = await api.GET(`/notifications/${user._id}`);
-        console.log("los datos son ", response);
+        // console.log("los datos son ", response);
         response.forEach(notification => addNotification(notification));
       } catch (error) {
         console.error('Error fetching notifications:', error);
@@ -47,14 +47,11 @@ if (!user) {
  navigation.navigate(stackRoutesNames.LOGIN)
 }
 
-  console.log('NOTIF length', notif.length);
-
   return (
     <Box flex={1} w={"90%"} alignSelf="center">
       <Text
         fontFamily="Bold"
         fontSize={"4xl"}
-        mt={"2xl"}
         color="#191970"
         textAlign="center"
       >
@@ -74,7 +71,7 @@ if (!user) {
             fontFamily="Ionicons"
             name="notifications"
             fontSize={scaleFontSize(25)}
-            color="pink"
+            color="#191970"
           />
           {notif.length >= 1 && (
             <Text style={{ position: 'absolute', bottom: 10, left: 10, color: '#191970', fontSize: scaleFontSize(20) }}>●</Text>

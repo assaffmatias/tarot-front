@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { HeaderDetails, Review } from "../components";
 import { Box, Button, Image, ScrollDiv, Tag, Text, Input } from "react-native-magnus";
 import { useRoute } from "@react-navigation/native";
@@ -30,6 +30,8 @@ const Details = ({ }) => {
   const route = useRoute();
   const { data = {} } = route.params;
   const user = useAuthStore((state) => state.userInfo);
+  const [paypalEmail, setPaypalEmail] = useState("");
+  const [stripeAlias, setStripeAlias] = useState("");
 
   const { data: reviews, loading } = useFetch({
     fetch: true,
@@ -38,7 +40,6 @@ const Details = ({ }) => {
 
   const [minutes, setMinutes] = useState(15);
   const [price, setPrice] = useState(data.price * minutes);
-  const [newPrice, setNewPrice] = useState(data.price);
   const isSelfProfile = user?._id === data.user._id;
 
   const handleSelect = (selectedMinutes) => {
@@ -47,18 +48,32 @@ const Details = ({ }) => {
     setPrice(newCalculatedPrice);
   };
 
-  const handleSavePrice = async () => {
-    try {
-      await api.PUT(`/services/update/${data._id}`, { price: newPrice });
-      alert("Precio actualizado con éxito");
-    } catch (error) {
-      alert("Error al actualizar el precio");
-    }
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await api.GET(`/user/${data.user._id}`);
+        const { paypal_email, stripe_alias } = response.user;
+
+        console.log('RESPONSSE:', response.user);
+
+
+        if (paypal_email) {
+          setPaypalEmail(paypal_email);
+        }
+        if (stripe_alias) {
+          setStripeAlias(stripe_alias);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        Alert.alert("Error", "Hubo un problema al cargar los datos del usuario.");
+      }
+    };
+    fetchData();
+  }, [user._id]);
 
   return (
     <>
-      <HeaderDetails />
+      {/* <HeaderDetails /> */}
       <ScrollDiv showsVerticalScrollIndicator={false} h={"100%"} w={"100%"}>
         <Image
           rounded={25}
@@ -67,6 +82,7 @@ const Details = ({ }) => {
           w={"95%"}
           alignSelf="center"
           h={300}
+          mt={20}
         />
         <Box my={"lg"} alignItems="center" flexDir="row" flexWrap="wrap" w={"95%"} alignSelf="center">
           {data?.tags?.map((t, key) => (
@@ -101,80 +117,73 @@ const Details = ({ }) => {
 
         <Box w={"90%"} alignSelf="center" my="lg">
           {isSelfProfile ? (
-            // Si es el tarotista viendo su propio perfil, muestra el input para editar el precio
-            <Box>
-              <Text fontFamily="Regular" fontSize={"xl"} color="gray-dark" mt="lg" mb={'lg'}>
-                Editar precio del servicio:
-              </Text>
-              <Input
-                value={newPrice.toString()}
-                onChangeText={setNewPrice}
-                keyboardType="numeric"
-                placeholder="Introduce el nuevo precio"
-              />
-            </Box>
+            // Si es el tarotista viendo su propio perfil, no muestra nada
+            null
           ) : (
-            // Si es otro usuario, muestra el selector de minutos y el precio calculado
+            // Si es otro usuario
             <>
-              <CustomSelect
-                title="Selecciona los minutos"
-                placeholder="Selecciona"
-                options={[15, 30, 45]}
-                setForm={(name, value) => handleSelect(value)}
-                form={{ lorem: minutes }}
-                selected={minutes}
-                name="minutes"
-              />
-              <Text fontFamily="Regular" fontSize={"xl"} color="gray-dark" mt="lg">
-                Precio total: ${price}
-              </Text>
+              {paypalEmail || stripeAlias ? (
+                // Si tiene al menos un método de pago, muestra el selector de minutos y el precio
+                <>
+                  <CustomSelect
+                    title="Selecciona los minutos"
+                    placeholder="Selecciona"
+                    options={[15, 30, 45]}
+                    setForm={(name, value) => handleSelect(value)}
+                    form={{ lorem: minutes }}
+                    selected={minutes}
+                    name="minutes"
+                  />
+                  <Text fontFamily="Regular" fontSize={"xl"} color="gray-dark" mt="lg">
+                    Precio total: ${price}
+                  </Text>
+                </>
+              ) : (
+                // Si no tiene ningún método de pago configurado, muestra un mensaje
+                <Text fontFamily="Regular" fontSize={"xl"} color="gray-dark" mt="lg" textAlign="center">
+                  Este usuario aún no acepta medios de pago.
+                </Text>
+              )}
             </>
           )}
         </Box>
 
         {
           isSelfProfile ? (
-            <Button
-              onPress={handleSavePrice}
-              rounded={10}
-              bg="primary"
-              color="#000"
-              fontFamily="Bold"
-              px={"2xl"}
-              alignSelf="center"
-              my={"lg"}
-            >
-              <Text color="#000">Guardar cambios</Text>
-            </Button>
+            null
           ) :
             (
               <Box flexDir="row" justifyContent="center">
-                <Button
-                  onPress={() => navigate(stackRoutesNames.PAY_SERVICE, { data, price, quantity:minutes, type: "hire",through: "paypal"})}
-                  rounded={10}
-                  bg="primary"
-                  color="#000"
-                  fontFamily="Bold"
-                  px={"2xl"}
-                  alignSelf="center"
-                  my={"lg"}
-                  mr={5}
-                >
-                  <Text color="#000">Paypal</Text>
-                </Button>
-                <Button
-                  onPress={() => navigate(stackRoutesNames.PAY_SERVICE, { data, price, quantity:minutes, type: "hire",through: "stripe" })}
-                  rounded={10}
-                  bg="primary"
-                  color="#000"
-                  fontFamily="Bold"
-                  px={"2xl"}
-                  alignSelf="center"
-                  my={"lg"}
-                  ml={5}
-                >
-                  <Text color="#000">Mastercard / Visa</Text>
-                </Button>
+                {paypalEmail && (
+                  <Button
+                    onPress={() => navigate(stackRoutesNames.PAY_SERVICE, { data, price, quantity: minutes, type: "hire", through: "paypal" })}
+                    rounded={10}
+                    bg="primary"
+                    color="#000"
+                    fontFamily="Bold"
+                    px={"2xl"}
+                    alignSelf="center"
+                    my={"lg"}
+                    mr={5}
+                  >
+                    <Text color="#000">Paypal</Text>
+                  </Button>
+                )}
+                {stripeAlias && (
+                  <Button
+                    onPress={() => navigate(stackRoutesNames.PAY_SERVICE, { data, price, quantity: minutes, type: "hire", through: "stripe" })}
+                    rounded={10}
+                    bg="primary"
+                    color="#000"
+                    fontFamily="Bold"
+                    px={"2xl"}
+                    alignSelf="center"
+                    my={"lg"}
+                    ml={5}
+                  >
+                    <Text color="#000">Mastercard / Visa</Text>
+                  </Button>
+                )}
               </Box>
             )
         }

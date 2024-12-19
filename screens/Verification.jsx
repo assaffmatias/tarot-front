@@ -4,6 +4,7 @@ import { useFetch, useForm } from "../hooks";
 import { CustomSelect } from "../components";
 import { ActivityIndicator, Dimensions } from "react-native";
 import { handleVerification } from "../services";
+import { useRoute } from "@react-navigation/native";
 const { height } = Dimensions.get("window");
 
 const typeoptions = {
@@ -12,11 +13,13 @@ const typeoptions = {
 };
 
 const Verification = () => {
+  const route = useRoute()
   const { setForm, form } = useForm({ initialValues: {} });
 
   const [btnLoading, setBtnLoading] = useState(false);
 
   const { data, loading } = useFetch({ url: "/questionnaire", fetch: true });
+  
 
   return (
     <Box flex={1} flexDir="column" justifyContent="center" pt={25}>
@@ -63,6 +66,7 @@ const Verification = () => {
           form,
           id: data?._id,
           setLoading: setBtnLoading,
+          userid: route.params.userid
         })}
         rounded={0}
         bg="primary"

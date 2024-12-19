@@ -15,3 +15,5 @@ export { default as Chat } from "./Chat";
 export { default as ChatList } from "./ChatList";
 export { default as Notifications } from "./Notifications"
 export { default as ChatIA} from './ChatIA'
+export { default as Publications } from './Publications' 
+export { default as Wallet } from './Wallet' 

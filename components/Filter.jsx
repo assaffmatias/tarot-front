@@ -102,12 +102,12 @@ const Filter = () => {
                         paddingHorizontal: 15,
                         flexDirection: "row",
                         alignItems: "center",
-                        backgroundColor: isSelected ? "#800080" : "#f9f9f9",
+                        backgroundColor: isSelected ? "#f6e05e" : "#f9f9f9",
                         borderRadius: 5,
                         marginVertical: 5
                       }}
                     >
-                      <Text style={{ color: isSelected ? "white" : "black" }}>
+                      <Text style={{ color: isSelected ? "black" : "black" }}>
                         {item.name}
                       </Text>
                     </TouchableOpacity>

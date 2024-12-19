@@ -57,9 +57,6 @@ const Notifications = () => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.headerText}>Notificaciones</Text>
-            </View>
             <ScrollView style={styles.scrollView}>
                 {notifications.length === 0 && (
                     <View style={styles.noMSG}>
@@ -88,24 +85,8 @@ export default Notifications;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        // paddingTop: '5%',
         alignItems: 'center',
         backgroundColor: '#fff',
-    },
-    header: {
-        width: "100%",
-        alignItems: "center",
-        justifyContent: "center",
-        marginTop: 20,
-        marginBottom: 20,
-        paddingHorizontal: 20
-    },
-    headerText: {
-        fontSize: 30,
-        fontWeight: '600',
-        textAlign: 'center',
-        color: '#fe7b9b',
-        paddingTop: '3%'
     },
     scrollView: {
         width: '100%',
@@ -119,7 +100,6 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         backgroundColor: '#f0f0f0',
         paddingHorizontal: 10,
-        // paddingLeft: 10,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
@@ -135,13 +115,11 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         color: '#333',
         lineHeight: 22,
-        // marginRight: 5
     },
     notificationDate: {
         fontSize: 12,
         color: '#888',
         marginTop: 10,
-        // textAlign: "right"
     },
     deleteButton: {
         justifyContent: 'center',

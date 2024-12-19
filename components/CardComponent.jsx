@@ -35,7 +35,7 @@ const CardComponent = ({ data }) => {
 
         <Box zIndex={1} position="absolute" bottom={"5%"} left={"5%"}>
           <Text my={"xs"} color="#fff" fontFamily="Bold" fontSize={"6xl"}>
-            {data?.user?.userName ?? "Error"}
+            {data?.user?.userName ?? "Tarotista"}
           </Text>
           <Text my={"xs"} color="#fff" fontFamily="Bold" fontSize={"3xl"}>
             Vidente <Box w={12} h={12} bg="green600" rounded={50} />

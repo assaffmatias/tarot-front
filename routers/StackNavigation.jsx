@@ -9,9 +9,12 @@ import {
   Login,
   Notifications,
   PayService,
+  Profile,
+  Publications,
   Recover,
   Register,
   Verification,
+  Wallet,
   Welcome,
 } from "../screens";
 import { stackRoutesNames } from "./stackRoutesNames";
@@ -61,7 +64,7 @@ const StackRoutes = {
     name: stackRoutesNames.DETAILS,
     Component: Details,
     auth: true,
-    header: false,
+    header: true,
   },
   PAY_SERVICE: {
     name: stackRoutesNames.PAY_SERVICE,
@@ -85,13 +88,13 @@ const StackRoutes = {
     name: stackRoutesNames.CHAT_LIST,
     Component: ChatList,
     auth: true,
-    header: false,
+    header: true,
   },
   NOTIFICATIONS: {
     name: stackRoutesNames.NOTIFICATIONS,
     Component: Notifications,
     auth: true,
-    header: false,
+    header: true,
   },
   ChatIA: {
     name: stackRoutesNames.CHAT_IA,
@@ -99,11 +102,44 @@ const StackRoutes = {
     auth: true,
     header: false,
   },
+  PUBLICATIONS: {
+    name: stackRoutesNames.PUBLICATIONS,
+    Component: Publications,
+    auth: true,
+    header: true,
+  },
+  PROFILE: {
+    name: stackRoutesNames.PROFILE,
+    Component: Profile,
+    auth: true,
+    header: false,
+  },
+  WALLET: {
+    name: stackRoutesNames.WALLET,
+    Component: Wallet,
+    auth: true,
+    header: true,
+  },
 };
 
 const Stack = createNativeStackNavigator();
 
 const screens = Object.values(StackRoutes);
+
+const getHeaderTitle = (screenName) => {
+  switch (screenName) {
+    case stackRoutesNames.CHAT_LIST:
+      return "Chat";
+    case stackRoutesNames.NOTIFICATIONS:
+      return "Notificaciones";
+    case stackRoutesNames.WALLET:
+      return "Medios de Pago";
+    case stackRoutesNames.PUBLICATIONS:
+      return "Tu Publicación";
+    default:
+      return "Arcano"; // Título predeterminado
+  }
+};
 
 const AppRoutes = () => {
   const authState = useAuthStore((state) => state.auth);
@@ -125,12 +161,24 @@ const AppRoutes = () => {
             <Stack.Screen
               key={name}
               name={name}
-              options={{ headerShown: header }}
+              options={({ navigation, route }) => ({
+                headerShown: header,
+                headerTitle: getHeaderTitle(name),
+                headerBackTitle: "Regresar",
+                // headerStyle: {
+                //   backgroundColor: "#f6e05e",
+                // },
+                headerTintColor: "#191970",
+                headerTitleStyle: {
+                  fontFamily: "Bold",
+                  fontSize: 18,
+                },
+              })}
               component={Component}
               listeners={({ navigation }) => ({
                 focus: () => {
                   if (auth && !authState) {
-                    navigation.navigate(screen_names.LOGIN);
+                    navigation.navigate(stackRoutesNames.LOGIN);
                   }
                 },
               })}

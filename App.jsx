@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import { api } from "./axios";
 import { useAuthStore } from "./stores";
 import { navigationRef } from "./helpers";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -34,12 +34,14 @@ export default function App() {
   if (!fontsLoaded) return null;
 
   return (
-    <ThemeProvider theme={customTheme}>
-      <SafeAreaProvider>
-        <NavigationContainer ref={navigationRef}>
-          <StackNavigation />
-        </NavigationContainer>
-      </SafeAreaProvider>
-    </ThemeProvider>
+    <SafeAreaProvider>
+      <SafeAreaView style={{ flex: 1 }}>
+        <ThemeProvider theme={customTheme}>
+          <NavigationContainer ref={navigationRef}>
+            <StackNavigation />
+          </NavigationContainer>
+        </ThemeProvider>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }

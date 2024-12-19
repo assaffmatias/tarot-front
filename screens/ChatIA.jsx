@@ -224,12 +224,12 @@ const ChatIA = () => {
       Alert.alert('Debes seleccionar una cantidad de monedas')
       return
     }
-    navigate(stackRoutesNames.PAY_COINS, {price, quantity: selectCoins, through: payment, type: 'coins'})
+    navigate(stackRoutesNames.PAY_COINS, { price, quantity: selectCoins, through: payment, type: 'coins' })
     setModalCoins(false)
   }
-  
+
   console.log('payment:', payment);
-  
+
 
   return (
     <SafeAreaView>
@@ -309,22 +309,22 @@ const ChatIA = () => {
               <Text style={{ fontSize: 20 }}>Selecciona una cantidad</Text>
               <Pressable onPress={() => handleQuantity(5)}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '80%', marginTop: 20, backgroundColor: selectCoins === 5 ? '#09f' : '#e8b442', padding: 10, borderRadius: 10 }}>
-                <Text style={{color: selectCoins === 5 ? '#fff' : '#000',}}>5 monedas</Text>
-                <Text style={{color: selectCoins === 5 ? '#fff' : '#000',}}>$2.45</Text>
+                  <Text style={{ color: selectCoins === 5 ? '#fff' : '#000', }}>5 monedas</Text>
+                  <Text style={{ color: selectCoins === 5 ? '#fff' : '#000', }}>$2.45</Text>
                 </View>
               </Pressable>
 
               <Pressable onPress={() => handleQuantity(10)}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '80%', marginTop: 20, backgroundColor: selectCoins === 10 ? '#09f' : '#e8b442', padding: 10, borderRadius: 10 }}>
-                <Text style={{color: selectCoins === 10 ? '#fff' : '#000',}}>10 monedas</Text>
-                <Text style={{color: selectCoins === 10 ? '#fff' : '#000',}}>$4.45</Text>
+                  <Text style={{ color: selectCoins === 10 ? '#fff' : '#000', }}>10 monedas</Text>
+                  <Text style={{ color: selectCoins === 10 ? '#fff' : '#000', }}>$4.45</Text>
                 </View>
               </Pressable>
 
               <Pressable onPress={() => handleQuantity(25)}>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '80%', marginTop: 20,  backgroundColor: selectCoins === 25 ? '#09f' : '#e8b442', padding: 10, borderRadius: 10 }}>
-                  <Text style={{color: selectCoins === 25 ? '#fff' : '#000',}}>25 monedas</Text>
-                  <Text style={{color: selectCoins === 25 ? '#fff' : '#000',}}>$9.95</Text>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '80%', marginTop: 20, backgroundColor: selectCoins === 25 ? '#09f' : '#e8b442', padding: 10, borderRadius: 10 }}>
+                  <Text style={{ color: selectCoins === 25 ? '#fff' : '#000', }}>25 monedas</Text>
+                  <Text style={{ color: selectCoins === 25 ? '#fff' : '#000', }}>$9.95</Text>
                 </View>
               </Pressable>
               <Text style={{ fontSize: 20, marginTop: 20 }}>Como quieres pagar?</Text>
@@ -334,6 +334,7 @@ const ChatIA = () => {
                     style={{
                       flexDirection: 'row',
                       justifyContent: 'space-between',
+                      alignItems: 'center',
                       marginTop: 20,
                       backgroundColor: payment === 'paypal' ? '#09f' : '#e8b442',
                       padding: 10,
@@ -341,7 +342,8 @@ const ChatIA = () => {
                       marginLeft: 10,
                     }}
                   >
-                    <Text style={{color: payment === 'paypal' ? '#fff' : '#000',}}>Paypal</Text>
+                    <FontAwesome6 name="paypal" size={24} color={payment === 'paypal' ? '#fff' : '#000'} />
+                    <Text style={{ color: payment === 'paypal' ? '#fff' : '#000', marginLeft: 10, fontWeight: 'bold' }}>Paypal</Text>
                   </View>
                 </Pressable>
 
@@ -350,6 +352,7 @@ const ChatIA = () => {
                     style={{
                       flexDirection: 'row',
                       justifyContent: 'space-between',
+                      alignItems: 'center',
                       marginTop: 20,
                       backgroundColor: payment === 'visa' ? '#09f' : '#e8b442',
                       padding: 10,
@@ -357,7 +360,8 @@ const ChatIA = () => {
                       marginLeft: 10,
                     }}
                   >
-                    <Text style={{color: payment === 'visa' ? '#fff' : '#000',}}>Mastercard / Visa</Text>
+                    <FontAwesome6 name="cc-mastercard" size={24} color={payment === 'visa' ? '#fff' : '#000'} />
+                    <Text style={{ color: payment === 'visa' ? '#fff' : '#000', marginLeft: 10, fontWeight: 'bold' }}>Mastercard / Visa</Text>
                   </View>
                 </Pressable>
               </View>

@@ -11,5 +11,8 @@ export const stackRoutesNames = {
   CHAT_LIST: "ChatList",
   NOTIFICATIONS: "Notifications",
   CHAT_IA: 'ChatIA',
-  PAY_COINS: 'PayCoins'
+  PAY_COINS: 'PayCoins',
+  PUBLICATIONS: 'PUBLICATIONS',
+  PROFILE: 'PROFILE',
+  WALLET: 'WALLET'
 };

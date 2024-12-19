@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { api } from "../axios";
 import * as SecureStore from "expo-secure-store";
+import { navigate } from "../helpers";
+import { stackRoutesNames } from "../routers/stackRoutesNames";
 
 const useAuthStore = create((set) => ({
   auth: false,
@@ -16,10 +18,10 @@ const useAuthStore = create((set) => ({
     await api.setToken({ token, user });
     set({ auth: true, token, userInfo: user });
   },
-  logout: async (navigateToLogin) => {
+  logout: async () => {
     await api.deleteToken();
     set({ auth: false, token: null, userInfo: null });
-    navigateToLogin();
+    navigate(stackRoutesNames.LOGIN);
   },
   restoreSession: async ({ auth, token, userInfo }) => {
     const promises = [];

@@ -41,7 +41,15 @@ const Profile = () => {
   
 
   const handleLogout = () => {
-    logout(() => navigate(stackRoutesNames.LOGIN));
+    Alert.alert(
+      "Cerrar Sesión",
+      "¿Estás seguro que deseas cerrar sesión?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        { text: "Aceptar", onPress: () => logout() },
+      ],
+      { cancelable: true }
+    );
   };
 
   const pickImage = async () => {
@@ -80,33 +88,50 @@ const Profile = () => {
     }
   };
 
-  const data = useMemo(
-    () => [
+  const data = useMemo(() => {
+    const menuItems = [
+      {
+        title: "Soporte",
+        iconName: "support-agent",
+        fontFamily: "MaterialIcons",
+        action: () => Linking.openURL("mailto:soporte@arcanoapp.com"),
+      },
+      {
+        title: "Cerrar Sesión",
+        iconName: "log-out",
+        fontFamily: "Feather",
+        action: handleLogout,
+      },
+    ];
+  
+    // Agregar el ítem de publicación si el rol es "USER_TAROT"
+    if (user?.role === "USER_TAROT") {
+      menuItems.splice(1, 0, { // Inserta antes de "Cerrar Sesión"
+        title: "Publicación",
+        iconName: "popup",
+        fontFamily: "Entypo",
+        action: () => navigate(stackRoutesNames.PUBLICATIONS, {userid: user._id}),
+      }, {
+        title: "Medios de pago",
+        iconName: "payment",
+        fontFamily: "MaterialIcons",
+        action: () => navigate(stackRoutesNames.WALLET, {userid: user._id})
+      });
+    }
+  
+    return [
       {
         title: "General",
-        data: [
-          {
-            title: "Soporte",
-            iconName: "support-agent",
-            fontFamily: "MaterialIcons",
-            action: () => Linking.openURL("mailto:soporte@arcanoapp.com"),
-          },
-          {
-            title: "Salir",
-            iconName: "logout",
-            fontFamily: "MaterialCommunityIcons",
-            action: handleLogout,
-          },
-        ],
+        data: menuItems,
       },
-    ],
-    [logout]
-  );
+    ];
+  }, [logout]);
+  
 
   return (
-    <Box px={25}>
+    <Box mt={0} h={height}>
       <Text
-        color="secondary"
+        color="#191970"
         textAlign="center"
         fontSize={20}
         fontFamily="Bold"
@@ -127,7 +152,7 @@ const Profile = () => {
         w={150}
         h={150}
         rounded={100}
-        borderColor="secondary"
+        borderColor="#191970"
         borderWidth={5}
       />
       <Pressable onPress={pickImage}>
@@ -151,7 +176,7 @@ const Profile = () => {
 
       {user.role !== "USER_TAROT" ? (
         <Button
-          onPress={() => navigate(stackRoutesNames.VERIFICATION)}
+          onPress={() => navigate(stackRoutesNames.VERIFICATION, {userid: user._id})}
           alignSelf="center"
           mt={"xl"}
           bg="primary"
@@ -178,12 +203,12 @@ const Profile = () => {
         keyExtractor={(item, index) => item.title + index}
         renderItem={({ item }) => (
           <Pressable onPress={item.action}>
-            <Box flexDir="row" alignItems="center">
+            <Box flexDir="row" alignItems="center" ml={20}>
               <Icon
                 name={item.iconName}
                 fontFamily={item.fontFamily}
                 fontSize={35}
-                color="secondary"
+                color="#191970"
                 mr="sm"
               />
               <Text fontFamily="Bold" fontSize={16} ml={5}>

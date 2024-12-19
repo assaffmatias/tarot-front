@@ -36,6 +36,7 @@ const NewComment = () => {
           alignSelf="center"
           rounded={10}
           fontFamily="Bold"
+          mt={30}
           onPress={() => setVisible(true)}
         >
           Ver más

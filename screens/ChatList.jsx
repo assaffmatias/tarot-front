@@ -34,7 +34,7 @@ const ChatList = () => {
     return user.role === 'USER_REGULAR' ?
         (
             <View style={styles.container}>
-                <Header style={styles.header}>
+                {/* <Header style={styles.header}>
                     <Box style={{ flexDirection: "row", alignItems: "center" }}>
                         <Pressable onPress={() => navigation.goBack()}>
                             <Icon name="chevron-back" fontFamily="Ionicons" fontSize={28} color="#000" />
@@ -42,7 +42,7 @@ const ChatList = () => {
                         <Text style={styles.headerText}>Mensajes</Text>
                     </Box>
 
-                </Header>
+                </Header> */}
                 <ScrollView style={styles.scrollView}>
                     {chatList.length === 0 && (
                         <View style={styles.noMSG}>
@@ -69,9 +69,9 @@ const ChatList = () => {
         )
         : (
             <View style={styles.container}>
-                <Header style={styles.header}>
+                {/* <Header style={styles.header}>
                     <Text style={styles.headerText}>Mensajes</Text>
-                </Header>
+                </Header> */}
                 <ScrollView style={styles.scrollView}>
                     {chatList.length === 0 && (
                         <View style={styles.noMSG}>
@@ -103,7 +103,6 @@ export default ChatList;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        // paddingTop: '5%',
         alignItems: 'center',
         backgroundColor: '#fff',
     },
@@ -111,14 +110,12 @@ const styles = StyleSheet.create({
         width: "100%",
         alignItems: "center",
         justifyContent: "center",
-        marginBottom: 10
     },
     headerText: {
         fontSize: 25,
         fontWeight: '600',
         textAlign: 'center',
-        marginLeft: 20,
-        color: '#191970'
+        color: '#191970',
     },
     scrollView: {
         width: '100%',
