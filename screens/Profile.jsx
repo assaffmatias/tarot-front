@@ -133,7 +133,7 @@ const Profile = () => {
       <Text
         color="#191970"
         textAlign="center"
-        fontSize={20}
+        fontSize={25}
         fontFamily="Bold"
       >
         Perfil
@@ -178,9 +178,9 @@ const Profile = () => {
         <Button
           onPress={() => navigate(stackRoutesNames.VERIFICATION, {userid: user._id})}
           alignSelf="center"
-          mt={"xl"}
-          bg="primary"
-          color="#000"
+          mt={"sm"}
+          bg="secondary"
+          color="#fff"
           fontFamily="Bold"
           rounded={10}
           fontSize={16}

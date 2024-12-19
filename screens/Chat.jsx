@@ -134,7 +134,7 @@ const Chat = () => {
           }
         }}
       >
-        <Icon name="send" fontFamily="Ionicons" fontSize={22} color="#09f" />
+        <Icon name="send" fontFamily="Ionicons" fontSize={22} color="#191970" />
       </Button>
     );
   };
@@ -168,15 +168,6 @@ const Chat = () => {
 
   return (
     <>
-      <Header style={{ paddingTop: '10%' }}>
-        <Box style={{ flexDirection: "row", alignItems: "center" }}>
-          <Pressable onPress={() => navigation.goBack()}>
-            <Icon name="chevron-back" fontFamily="Ionicons" fontSize={28} color="#000" />
-          </Pressable>
-          {/* <Button onPress={() => navigation.goBack()}>Regresar</Button> */}
-          <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", marginLeft: 20 }}>{sellerName || userName}</Text>
-        </Box>
-      </Header>
       <GiftedChat
       containerStyle={{ marginBottom: 10, marginTop: 20 }}
         renderAvatar={() => (

@@ -141,7 +141,7 @@ const Details = ({ }) => {
               ) : (
                 // Si no tiene ningún método de pago configurado, muestra un mensaje
                 <Text fontFamily="Regular" fontSize={"xl"} color="gray-dark" mt="lg" textAlign="center">
-                  Este usuario aún no acepta medios de pago.
+                  Este usuario no acepta medios de pago.
                 </Text>
               )}
             </>

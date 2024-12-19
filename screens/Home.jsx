@@ -74,7 +74,7 @@ if (!user) {
             color="#191970"
           />
           {notif.length >= 1 && (
-            <Text style={{ position: 'absolute', bottom: 10, left: 10, color: '#191970', fontSize: scaleFontSize(20) }}>●</Text>
+            <Text style={{ position: 'absolute', bottom: 10, left: 10, color: '#800080', fontSize: scaleFontSize(20) }}>●</Text>
           )}
         </Button>
 

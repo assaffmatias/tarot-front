@@ -82,7 +82,7 @@ const StackRoutes = {
     name: stackRoutesNames.CHAT_SERVICE,
     Component: Chat,
     auth: true,
-    header: false,
+    header: true,
   },
   CHAT_LIST: {
     name: stackRoutesNames.CHAT_LIST,
@@ -128,7 +128,7 @@ const screens = Object.values(StackRoutes);
 
 const getHeaderTitle = (screenName) => {
   switch (screenName) {
-    case stackRoutesNames.CHAT_LIST:
+    case stackRoutesNames.CHAT_SERVICE:
       return "Chat";
     case stackRoutesNames.NOTIFICATIONS:
       return "Notificaciones";

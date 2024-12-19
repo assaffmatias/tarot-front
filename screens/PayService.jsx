@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { WebView } from "react-native-webview";
-import { View, ActivityIndicator } from "react-native";
+import { View, ActivityIndicator, Alert } from "react-native";
 import { api } from "../axios";
 import { useAuthStore } from "../stores";
 import { useRoute } from "@react-navigation/native";
@@ -18,7 +18,10 @@ const PayService = () => {
 
   const { data = {}, price, quantity, type, through } = route.params || {};
   console.log(quantity, type);
-  
+
+  console.log('USER:', user.userName);
+
+
 
   useEffect(() => {
     // Llama a la API para obtener el approvalUrl solo una vez
@@ -31,7 +34,8 @@ const PayService = () => {
           seller: data.user._id,
           service: data._id,
           quantity,
-          type
+          type,
+          // userName: user.userName
         });
         setApprovalUrl(response.approvalUrl);
       } catch (error) {
@@ -41,7 +45,7 @@ const PayService = () => {
     const createPaymentStripe = async () => {
       try {
         console.log(data);
-        
+
         const response = await api.POST("/transaction/cc", {
           currency: "USD",
           amount: `${price}.00`,
@@ -49,7 +53,8 @@ const PayService = () => {
           seller: data.user._id,
           service: data._id,
           quantity,
-          type
+          type,
+          // userName: user.userName
         });
         console.log(response.approvalUrl);
         setApprovalUrl(response.approvalUrl);
@@ -67,7 +72,7 @@ const PayService = () => {
 
     const urlObj = new URL(url);
     console.log(urlObj.pathname);
-    
+
     if (urlObj.pathname === "/success/cc") {
       // await api.POST("/transaction/success/cc", {
       //   client: user._id,
@@ -106,12 +111,12 @@ const PayService = () => {
           onLoad={() => setLoading(false)}
           onNavigationStateChange={(event) => {
             if (event.url.includes("success")) {
-              alert(`Pago exitoso!`);
+              Alert.alert('Tu pago fué exitoso', 'ahora puedes iniciar una conversación con el tarotista');
               successTransaction(event.url);
               navigation.navigate(stackRoutesNames.HOME);
             }
             if (event.url.includes("cancel")) {
-              alert(`Pago cancelado!`);
+              Alert.alert(`Pago cancelado!`);
               // successTransaction(event.url);
               navigation.goBack();
             }
